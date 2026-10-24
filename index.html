@@ -1,0 +1,3385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Heather, Ossie, Garry &amp; Margaret's Nullarbor Adventure</title>
+<meta name="description" content="Follow Heather, Ossie, Garry and Margaret across the Nullarbor, August–September 2026.">
+<meta name="theme-color" content="#2a1d13">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="icon" href="assets/icon-180.png">
+
+<!-- what the icon is called once it is sitting on a phone's home screen -->
+<meta name="apple-mobile-web-app-title" content="Nullarbor Adventures">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="application-name" content="Nullarbor Adventures">
+<!-- no start_url in the manifest, so Heather's icon keeps her posting code -->
+<link rel="manifest" href="manifest.webmanifest">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bitter:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+
+<style>
+:root{
+  --ink:#22323b;
+  --ink-2:#4d626d;
+  --ink-3:#7d8f99;
+  --night:#263640;
+  --ochre:#c1663f;
+  --ochre-lt:#e08b4f;
+  --ochre-wash:#f7ebe1;
+  --sage:#adbe9d;
+  --sky:#a8c4e0;
+  --sand:#faf5ec;
+  --card:#ffffff;
+  --line:#e6ddcd;
+  --shadow:0 1px 2px rgba(38,54,64,.06),0 8px 24px rgba(38,54,64,.07);
+  --radius:16px;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;padding:0}
+body{
+  background:var(--sand);
+  color:var(--ink);
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  font-size:16px;line-height:1.5;
+  -webkit-text-size-adjust:100%;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{font-family:Bitter,Georgia,serif;font-weight:700;margin:0;letter-spacing:-.01em}
+.wrap{max-width:1120px;margin:0 auto;padding:0 16px}
+
+/* ---------- Header : the illustration, edge to edge ---------- */
+header{
+  position:relative;isolation:isolate;color:#33210f;overflow:hidden;text-align:center;
+  background:#d49e5b url("assets/hero-wide.jpg") 50% 7%/cover no-repeat;
+  min-height:clamp(216px,19vw,360px);
+  display:flex;align-items:flex-start;
+  padding:15px 0 0;
+}
+/* a wash of light behind the words, so nothing dark covers the artwork */
+header::before{
+  content:"";position:absolute;inset:0;z-index:-1;
+  background:radial-gradient(ellipse 46% 46% at 50% 15%,
+    rgba(255,247,228,.90) 0%, rgba(255,247,228,.66) 40%,
+    rgba(255,247,228,.24) 66%, rgba(255,247,228,0) 84%);
+}
+header::after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:5px;
+  background:linear-gradient(90deg,var(--ochre) 0%,var(--ochre-lt) 40%,var(--sage) 75%,var(--sky) 100%);
+}
+.header-inner{max-width:1120px;width:100%}
+.eyebrow{
+  font-size:11px;letter-spacing:.17em;text-transform:uppercase;
+  color:#9a4f1c;font-weight:700;margin-bottom:5px;
+  text-shadow:0 1px 0 rgba(255,252,242,.85);
+}
+header h1{
+  font-size:clamp(17px,2.15vw,28px);line-height:1.15;color:#33210f;white-space:nowrap;
+  text-shadow:0 1px 0 rgba(255,252,242,.9),0 2px 10px rgba(255,246,224,.85);
+}
+@media (max-width:760px){
+  header{
+    /* banner across the top, settling into sand taken from its own bottom edge */
+    background-image:url("assets/hero-wide.jpg"),
+                     linear-gradient(180deg,#d49e5b 0%,#d49e5b 62%,#b7884f 100%);
+    background-size:100% auto,100% 100%;
+    background-position:top center,top center;
+    background-repeat:no-repeat,no-repeat;
+    min-height:248px;align-items:flex-end;padding:0 0 20px;
+  }
+  header::before{
+    background:radial-gradient(ellipse 78% 34% at 50% 84%,
+      rgba(255,247,228,.55) 0%, rgba(255,247,228,.20) 55%, rgba(255,247,228,0) 80%);
+  }
+  header h1{white-space:normal;font-size:clamp(20px,5.5vw,26px)}
+  .stats .sep{display:none}
+  .stats{gap:3px 15px}
+}
+
+/* ---------- Status ---------- */
+.status{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow);margin-top:-14px;position:relative;z-index:5;
+  padding:13px 18px 15px;
+}
+.status-label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+.status-now{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-top:3px}
+.status-now .place{font-family:Bitter,Georgia,serif;font-size:clamp(20px,4.6vw,27px);font-weight:700;line-height:1.15}
+.status-now .day-of{
+  font-size:12px;font-weight:600;color:var(--ochre);background:var(--ochre-wash);
+  border-radius:999px;padding:4px 10px;white-space:nowrap;
+}
+.status-sub{color:var(--ink-2);font-size:13.5px;margin-top:4px;max-width:70ch}
+.bar{height:6px;background:#eee7da;border-radius:999px;margin-top:10px;overflow:hidden}
+.bar span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--ochre),var(--ochre-lt))}
+.stats{margin-top:8px;font-size:12.5px;color:var(--ink-3);display:flex;gap:8px;flex-wrap:wrap;align-items:baseline}
+.stats b{font-family:Bitter,Georgia,serif;font-size:14.5px;color:var(--ink);font-weight:700}
+.stats .sep{color:#cfc4b1}
+
+/* ---------- Latest strip ---------- */
+.latest{
+  display:flex;align-items:center;gap:12px;margin-top:12px;padding:9px 12px;
+  background:var(--card);border:1px solid var(--line);border-radius:14px;
+  box-shadow:var(--shadow);text-decoration:none;color:inherit;
+}
+.latest img{width:52px;height:52px;border-radius:10px;object-fit:cover;flex:none;background:#eee7da}
+.latest span{display:flex;flex-direction:column;min-width:0}
+.latest b{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--ochre)}
+.latest em{font-style:normal;font-size:14px;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.latest-go{margin-left:auto;font-size:13px;font-weight:600;color:var(--ink-3);white-space:nowrap}
+/* the unread count on the Journal tab: a bubble with a number in it */
+.tab-dot{display:none}
+.tab-dot.on{
+  display:inline-block;min-width:20px;height:20px;padding:0 6px;margin-left:5px;
+  border-radius:999px;background:var(--ochre);color:#fff;
+  font:700 12px Inter,sans-serif;line-height:20px;text-align:center;vertical-align:1px;
+}
+
+/* ---------- Journal ---------- */
+.post{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow);overflow:hidden;margin-bottom:14px;
+}
+.post-head{display:flex;align-items:center;gap:10px;padding:12px 14px}
+.post-head img{width:36px;height:36px;border-radius:50%;flex:none}
+.post-who{font-weight:700;font-size:14.5px}
+.post-when{font-size:12.5px;color:var(--ink-3)}
+.post-photos{display:grid;gap:3px;background:#e9e1d2}
+.post-photos.n1{grid-template-columns:1fr}
+.post-photos.n2{grid-template-columns:1fr 1fr}
+.post-photos.n3,.post-photos.n4{grid-template-columns:1fr 1fr}
+.post-photos img{width:100%;display:block;object-fit:cover;cursor:zoom-in;background:#e9e1d2}
+.post-photos.n1 img{max-height:min(70vh,560px);object-fit:contain;background:#f3ede1}
+.post-photos:not(.n1) img{aspect-ratio:4/3}
+.post-text{padding:12px 14px 14px;font-size:15px;color:var(--ink-2);line-height:1.55}
+.post-actions{padding:6px 14px 4px}
+.like-btn{
+  display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);
+  background:var(--card);border-radius:999px;cursor:pointer;
+  font:700 13px Inter,sans-serif;color:var(--ink-2);padding:7px 13px;
+}
+.like-btn.liked{border-color:#e8c3b4;background:#fdf1ec;color:#a8543c}
+.like-heart{font-size:15px;line-height:1}
+.like-count{min-width:7px}
+.like-names{margin-left:9px;font-size:12.5px;color:var(--ink-3);vertical-align:middle}
+.post-tools{display:flex;gap:8px;justify-content:flex-end;padding:0 14px 12px}
+.post-tools button{
+  border:1px solid var(--line);background:var(--card);border-radius:999px;cursor:pointer;
+  font:600 12.5px Inter,sans-serif;color:var(--ink-2);padding:7px 14px;
+}
+.post-tools button.danger{color:#a8543c;border-color:#e8cdc0}
+.post-tools button.danger.armed{background:#a8543c;border-color:#a8543c;color:#fff}
+.tool-note{font-size:12.5px;color:#a8543c;text-align:right;line-height:1.45}
+
+/* ---------- Comments ---------- */
+.cmts{border-top:1px solid #f2ece0;background:#fffdf9;padding:4px 14px 12px}
+.cmt{padding:10px 0;border-bottom:1px solid #f5efe4}
+.cmt:last-of-type{border-bottom:0}
+.cmt-top{display:flex;align-items:baseline;gap:8px}
+.cmt-top b{font-size:14px;color:var(--ink)}
+.cmt-when{font-size:11.5px;color:var(--ink-3)}
+.cmt-del{
+  margin-left:auto;border:0;background:none;cursor:pointer;padding:2px 0;
+  font:600 11.5px Inter,sans-serif;color:#b06a52;
+}
+.cmt-body{font-size:14.5px;color:var(--ink-2);line-height:1.5;margin-top:2px;overflow-wrap:anywhere}
+.cmt-form{padding-top:10px}
+.cmt-name{
+  width:100%;margin-bottom:7px;font:inherit;font-size:16px;color:var(--ink);
+  background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;
+}
+.cmt-row{display:flex;gap:7px}
+.cmt-in{
+  flex:1;min-width:0;font:inherit;font-size:16px;color:var(--ink);
+  background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;
+}
+.cmt-in:focus,.cmt-name:focus{outline:2px solid var(--ochre-lt);outline-offset:-1px}
+.cmt-go{
+  flex:none;border:0;border-radius:10px;cursor:pointer;padding:0 17px;
+  background:var(--ochre-wash);color:var(--ochre);font:700 14.5px Inter,sans-serif;
+}
+.cmt-go:disabled{color:var(--ink-3);cursor:default}
+.cmt-note{font-size:12.5px;color:#a8543c;margin:7px 0 0}
+.cmt-as{margin-top:7px;font-size:12.5px;color:var(--ink-3)}
+.cmt-as b{color:var(--ink-2)}
+.cmt-chg{
+  border:0;background:none;cursor:pointer;padding:0;margin-left:4px;
+  font:600 12.5px Inter,sans-serif;color:var(--ochre);text-decoration:underline;
+}
+.cmt-chg.strong{margin-left:0;font-size:13.5px}
+/* room at the end of the journal so the floating button never sits on top
+   of the Edit and Delete buttons of the last post */
+body.can-post #panel-journal{padding-bottom:88px}
+.del-btn{
+  width:100%;margin-top:10px;padding:14px;cursor:pointer;border-radius:13px;
+  background:none;border:1px solid #e8cdc0;color:#a8543c;font:700 15px Inter,sans-serif;
+}
+.del-btn.armed{background:#a8543c;border-color:#a8543c;color:#fff}
+.keep-btn{
+  width:100%;margin-top:9px;padding:14px;cursor:pointer;border-radius:13px;
+  background:none;border:1px solid var(--line);color:var(--ink-2);font:700 15px Inter,sans-serif;
+}
+.ask-text{font-size:15px;color:var(--ink-2);line-height:1.55;margin:2px 0 0}
+.thumbs figure.old img{outline:2px solid var(--sage);outline-offset:-2px}
+.journal-empty{
+  background:var(--card);border:1px dashed var(--line);border-radius:var(--radius);
+  padding:26px 18px;text-align:center;color:var(--ink-3);font-size:14.5px;
+}
+
+/* ---------- Full-screen gallery ---------- */
+.gal{
+  position:fixed;inset:0;z-index:1200;background:rgba(20,14,9,.95);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:calc(60px + env(safe-area-inset-top)) 18px calc(18px + env(safe-area-inset-bottom));
+  gap:12px;
+}
+/* the photo itself, with the caption below it rather than written over the
+   top of it — a long caption used to sit on top of the photo and hide it */
+.gal-stage{
+  position:relative;flex:1 1 auto;min-height:0;width:100%;
+  display:flex;align-items:center;justify-content:center;
+}
+.gal-stage img{max-width:94vw;max-height:100%;border-radius:6px;box-shadow:0 10px 50px rgba(0,0,0,.6)}
+.gal-x{
+  position:absolute;top:calc(12px + env(safe-area-inset-top));right:14px;z-index:2;
+  width:44px;height:44px;border-radius:50%;border:0;cursor:pointer;
+  background:rgba(255,255,255,.16);color:#fff;font-size:28px;line-height:1;
+}
+.gal-nav{
+  position:absolute;top:50%;transform:translateY(-50%);z-index:2;
+  width:52px;height:52px;border-radius:50%;border:0;cursor:pointer;
+  background:rgba(255,255,255,.16);color:#fff;font-size:32px;line-height:1;
+}
+.gal-prev{left:10px}
+.gal-next{right:10px}
+.gal-info{width:100%;max-width:640px;flex:none}
+.gal-cap{
+  display:flex;justify-content:center;gap:12px;color:#e8dccb;font-size:13.5px;
+  margin-bottom:8px;
+}
+.gal-cap span:last-child{color:#a89a86}
+.gal-note{
+  text-align:center;color:#f3ead9;font-size:15px;line-height:1.5;margin-bottom:10px;
+}
+.gal-note span{
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;
+}
+.gal-note.expanded span{-webkit-line-clamp:unset;overflow:visible}
+.gal-more{
+  display:block;margin:6px auto 0;border:0;background:none;cursor:pointer;
+  color:#f3ead9;font:700 13px Inter,sans-serif;text-decoration:underline;
+}
+.gal-cmt{
+  display:block;margin:0 auto;max-width:min(620px,88vw);text-align:left;cursor:pointer;
+  border:0;border-radius:999px;padding:9px 16px;
+  background:rgba(255,255,255,.14);color:#f3ead9;font:14px Inter,sans-serif;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.gal-cmt-who{font-weight:700}
+.gal-cmt-more{color:#c9bba4;font-size:13px;margin-left:7px}
+.post-photos img,.pop-shots img{cursor:zoom-in}
+.pop-more{
+  position:relative;display:inline-flex;align-items:center;justify-content:center;
+  width:52px;height:52px;border-radius:8px;background:#e3d9c6;color:var(--ink-2);
+  font-weight:700;font-size:13px;cursor:zoom-in;
+}
+
+/* ---------- Add photos ---------- */
+.add-btn{
+  position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom));
+  z-index:900;border:0;border-radius:999px;cursor:pointer;
+  background:linear-gradient(180deg,var(--ochre-lt),var(--ochre));color:#fff;
+  font:700 16.5px Inter,sans-serif;padding:16px 30px;
+  box-shadow:0 6px 20px rgba(120,60,30,.45);
+}
+#askSheet,#nameSheet{z-index:1100}
+.bell{
+  position:fixed;top:calc(12px + env(safe-area-inset-top));right:14px;z-index:800;
+  width:46px;height:46px;border-radius:50%;border:0;cursor:pointer;
+  background:rgba(38,54,64,.55);backdrop-filter:blur(6px);
+  box-shadow:0 4px 16px rgba(38,54,64,.35);
+}
+.bell-ico{font-size:20px;line-height:1}
+.bell-n{
+  position:absolute;top:-3px;right:-3px;min-width:21px;height:21px;padding:0 5px;
+  border-radius:999px;background:var(--ochre);color:#fff;
+  font:700 12px Inter,sans-serif;line-height:21px;box-shadow:0 0 0 2px rgba(250,245,236,.9);
+}
+.new-list{margin-top:4px}
+.new-item{
+  display:flex;gap:11px;width:100%;text-align:left;cursor:pointer;
+  background:var(--card);border:1px solid var(--line);border-radius:12px;
+  padding:12px 13px;margin-top:8px;font:inherit;color:var(--ink-2);
+}
+.new-item:hover{background:#fffdf7}
+.new-ico{font-size:17px;line-height:1.3}
+.new-item b{color:var(--ink);font-size:14.5px}
+.new-item em{display:block;font-style:normal;font-size:13.5px;color:var(--ink-2);margin-top:3px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.new-when{display:block;font-size:11.5px;color:var(--ink-3);margin-top:4px}
+#nameIn{margin-top:14px}
+.sheet{position:fixed;inset:0;z-index:1000;background:rgba(26,17,10,.55);display:flex;align-items:flex-end;justify-content:center}
+.sheet-card{
+  background:var(--sand);width:100%;max-width:520px;max-height:92vh;overflow:auto;
+  border-radius:20px 20px 0 0;padding:16px 16px calc(20px + env(safe-area-inset-bottom));
+}
+.sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.sheet-head b{font-family:Bitter,Georgia,serif;font-size:19px}
+.sheet-head button{border:0;background:#eae2d4;width:34px;height:34px;border-radius:50%;font-size:22px;line-height:1;cursor:pointer;color:var(--ink-2)}
+.pick{
+  display:flex;align-items:center;gap:14px;padding:18px;cursor:pointer;
+  background:var(--card);border:2px dashed #d9c9ae;border-radius:14px;
+}
+.pick-ico{font-size:30px}
+.pick-txt{display:flex;flex-direction:column}
+.pick-txt b{font-size:16.5px}
+.pick-txt em{font-style:normal;font-size:13px;color:var(--ink-3)}
+.thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:7px;margin-top:11px}
+.thumbs figure{position:relative;margin:0}
+.thumbs img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:9px;display:block}
+.thumbs button{
+  position:absolute;top:-6px;right:-6px;width:24px;height:24px;border-radius:50%;
+  border:2px solid #fff;background:#22323b;color:#fff;font-size:14px;line-height:1;cursor:pointer;
+}
+.fld{display:block;margin-top:14px;font-size:13px;font-weight:600;color:var(--ink-2)}
+.fld-check{display:flex;align-items:center;gap:9px;margin-top:16px;font-size:13.5px;font-weight:600;color:var(--ink-2);cursor:pointer}
+.fld-check input{width:17px;height:17px;flex:none;accent-color:var(--ochre)}
+.fld-row{display:flex;gap:10px}
+.fld-row .fld{flex:1;margin-top:14px}
+.fld input,.fld select,.fld textarea{
+  width:100%;margin-top:6px;font:inherit;font-size:16px;color:var(--ink);
+  background:var(--card);border:1px solid var(--line);border-radius:11px;padding:12px;
+}
+.fld input[readonly]{background:#f0ece1;color:var(--ink-3);cursor:not-allowed}
+.post-btn{
+  width:100%;margin-top:16px;border:0;border-radius:13px;cursor:pointer;
+  background:var(--ochre);color:#fff;font:700 17px Inter,sans-serif;padding:16px;
+}
+.post-btn:disabled{background:#d9cdbb;cursor:default}
+.picks{margin-top:8px;background:var(--card);border:1px solid var(--line);border-radius:11px;overflow:hidden}
+.picks button{
+  display:block;width:100%;text-align:left;border:0;background:none;cursor:pointer;
+  padding:12px 14px;border-bottom:1px solid #f2ece0;font:inherit;
+}
+.picks button:last-child{border-bottom:0}
+.picks button:hover,.picks button:focus{background:var(--ochre-wash)}
+.picks b{display:block;font-size:15.5px;color:var(--ink);font-weight:700}
+.picks em{font-style:normal;font-size:12.5px;color:var(--ink-3)}
+.chosen{
+  margin-top:8px;padding:11px 13px;border-radius:11px;
+  background:var(--ochre-wash);border:1px solid #e6c6ae;font-size:14px;color:#7a4526;
+}
+.chosen b{display:block;font-size:15.5px;color:#5c3819}
+.sheet-note{font-size:12.5px;color:var(--ink-3);text-align:center;margin:10px 0 0}
+.sheet-note.busy{color:var(--ochre);font-weight:600}
+.add-stop{
+  display:block;width:100%;margin:14px 0 8px;padding:15px;cursor:pointer;
+  background:var(--card);border:2px dashed #d9c9ae;border-radius:14px;
+  font:700 15.5px Inter,sans-serif;color:var(--ochre);
+}
+.row-added{font-size:11px;font-weight:700;color:var(--sage);letter-spacing:.06em;text-transform:uppercase}
+.row-del{border:0;background:none;color:#b06a52;font:600 12.5px Inter,sans-serif;cursor:pointer;padding:2px 0}
+.row-edit{border:0;background:none;color:var(--ochre);font:600 12.5px Inter,sans-serif;cursor:pointer;padding:2px 0}
+.room.row-acts{display:flex;flex-direction:column;align-items:flex-start;gap:6px;margin-top:4px}
+
+/* ---------- Tabs ---------- */
+.tabs{display:flex;gap:6px;margin:12px 0 10px;background:#f0e9dc;padding:5px;border-radius:12px;width:fit-content;max-width:100%}
+.tabs button{
+  font:inherit;font-weight:600;font-size:14.5px;border:0;background:transparent;color:var(--ink-2);
+  padding:8px 17px;border-radius:9px;cursor:pointer;white-space:nowrap;transition:.15s;
+}
+.tabs button[aria-selected="true"]{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(38,54,64,.12)}
+.panel[hidden]{display:none}
+
+/* ---------- Map ---------- */
+.map-shell{
+  border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
+  box-shadow:var(--shadow);background:var(--card);
+}
+#map{height:min(62vh,540px);min-height:340px;width:100%;background:#e8e2d6}
+.map-views{display:flex;gap:8px;padding:11px 14px 0;background:#fffdf9;border-top:1px solid var(--line)}
+.map-views button{
+  font:inherit;font-size:13.5px;font-weight:600;color:var(--ink-2);cursor:pointer;
+  background:#f2ece0;border:1px solid transparent;border-radius:9px;padding:8px 13px;transition:.15s;
+}
+.map-views button.on{background:var(--ochre-wash);border-color:#e6c6ae;color:var(--ochre)}
+.map-legend{border-top:0!important;
+  display:flex;gap:16px;flex-wrap:wrap;padding:11px 14px;border-top:1px solid var(--line);
+  font-size:12.5px;color:var(--ink-2);background:#fffdf9;
+}
+.map-legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:1px}
+.map-hint{font-size:13px;color:var(--ink-3);margin:10px 2px 0}
+
+/* map markers */
+.pin{
+  width:26px;height:26px;border-radius:50%;border:2.5px solid #fff;
+  display:flex;align-items:center;justify-content:center;
+  font:700 12px/1 Inter,sans-serif;color:#fff;
+  box-shadow:0 2px 6px rgba(0,0,0,.32);
+}
+.pin.done{background:var(--ochre);color:#fff}
+.pin.todo{background:var(--sky);color:#20323f}
+.pin.side{border-radius:6px}
+.pin.side.todo{background:var(--sage);color:#22323b}
+.pin.now{background:var(--ochre);color:#fff;border-width:3.5px;box-shadow:0 3px 10px rgba(120,60,30,.55)}
+/* a town stayed in more than once carries both its numbers, so the pin
+   stretches into a pill rather than a circle */
+.pin.multi{width:100%;border-radius:999px;font-size:11px;letter-spacing:.01em}
+.pin-n{position:relative;z-index:1}
+.pin-pulse{
+  position:absolute;left:0;top:0;width:100%;height:100%;border-radius:50%;
+  background:rgba(193,102,63,.45);animation:pulse 2.2s ease-out infinite;
+}
+.pin-cam{position:absolute;right:-9px;bottom:-7px;font-size:11px;font-style:normal;
+  background:#fff;border-radius:50%;width:16px;height:16px;line-height:16px;text-align:center;
+  box-shadow:0 1px 3px rgba(0,0,0,.35)}
+.pin{position:relative}
+.pop-post{margin-top:11px;padding-top:10px;border-top:1px dashed #ece4d5}
+/* one block per separate stay, for a town they came back to */
+.pop-stay{margin-top:9px;padding-top:9px;border-top:1px dashed #ece4d5}
+.pop-note{
+  margin-top:7px;font-size:13.5px;color:var(--ink-2);line-height:1.5;
+  display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden;
+}
+.pop-by{margin-top:4px;font-size:11.5px;color:var(--ink-3)}
+.pop-shots{display:flex;gap:5px;margin-top:9px}
+.pop-shots img{width:52px;height:52px;object-fit:cover;border-radius:8px;cursor:pointer}
+.pop-see{margin-top:9px;font-size:12.5px;font-weight:700;color:var(--ochre);cursor:pointer}
+.pop-see:hover{text-decoration:underline}
+.convoy{position:relative;width:98px;height:54px}
+.convoy-label{position:absolute;left:0;top:-21px;width:98px;text-align:center;font:600 10.5px Inter,sans-serif;
+  color:#22323b;background:rgba(255,255,255,.92);border-radius:6px;padding:1px 0;white-space:nowrap}
+.convoy-label:empty{display:none}
+.convoy img{position:absolute;border-radius:50%;filter:drop-shadow(0 3px 7px rgba(0,0,0,.4))}
+.convoy .lead{left:0;top:0;width:52px;height:52px;z-index:2}
+.convoy .tail{left:46px;top:8px;width:44px;height:44px;z-index:1}
+@keyframes pulse{0%{transform:scale(.5);opacity:.9}70%{transform:scale(2.1);opacity:0}100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.pin-pulse{animation:none;opacity:.35;transform:scale(1.6)}}
+
+/* popups */
+.leaflet-popup-content-wrapper{border-radius:13px;box-shadow:0 10px 30px rgba(38,54,64,.22);padding:2px}
+.leaflet-popup-content{margin:13px 15px;font-family:Inter,sans-serif;line-height:1.45;width:auto!important;min-width:210px}
+.pop-date{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ochre);font-weight:700}
+.pop-title{font-family:Bitter,Georgia,serif;font-size:18px;font-weight:700;margin:3px 0 8px;color:var(--ink)}
+.pop-row{display:flex;gap:7px;font-size:13.5px;color:var(--ink-2);padding:3px 0;align-items:flex-start}
+.pop-row span:first-child{width:16px;flex:none;text-align:center}
+.pop-tbc{background:#fdf3e3;color:#8a5a1c;font-size:12px;font-weight:600;border-radius:7px;padding:6px 9px;margin-top:8px}
+
+/* ---------- Day cards ---------- */
+.today-card{
+  margin-top:16px;background:var(--card);border:1px solid var(--line);border-left:5px solid var(--ochre);
+  border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow);
+}
+.card-label{
+  font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-3);font-weight:600;margin-bottom:3px;
+}
+.today-card h3{font-size:18px;margin-bottom:4px}
+.today-card p{margin:4px 0 0;color:var(--ink-2);font-size:14.5px}
+
+/* ---------- Itinerary ---------- */
+.itin-note{
+  background:#fffdf7;border:1px solid var(--line);border-radius:var(--radius);
+  padding:14px 16px;font-size:14px;color:var(--ink-2);margin-bottom:16px;
+}
+.itin-note b{color:var(--ink)}
+table{width:100%;border-collapse:collapse;background:var(--card);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--line)}
+thead th{
+  background:var(--night);color:#dce6ea;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  text-align:left;padding:12px 14px;font-weight:600;white-space:nowrap;
+}
+tbody td{padding:13px 14px;border-top:1px solid #f0eade;font-size:14.5px;vertical-align:top}
+@media (min-width:721px){
+  tbody td:nth-child(4),tbody td:nth-child(5){white-space:nowrap}
+  thead th:nth-child(6),tbody td:nth-child(6){width:32%}
+}
+tbody tr{cursor:pointer;transition:background .12s}
+tbody tr:hover td{background:#fdf9f0}
+tbody tr:focus-visible{outline:2px solid var(--ochre);outline-offset:-2px}
+tbody tr.past{color:var(--ink-3)}
+tbody tr.today td{background:var(--ochre-wash)}
+tbody tr.today td:first-child{box-shadow:inset 4px 0 0 var(--ochre)}
+tbody tr.just-added td{background:#eef4e6;transition:background 1.2s}
+tbody tr.just-added td:first-child{box-shadow:inset 4px 0 0 var(--sage)}
+.dest{font-weight:600}
+.room{display:block;color:var(--ink-3);font-size:12.5px;margin-top:2px}
+.tbc{color:#8a5a1c;background:#fdf3e3;border-radius:6px;padding:2px 7px;font-size:12px;font-weight:600;display:inline-block}
+.stay-note{color:var(--ink-3);font-style:italic}
+
+/* mobile: table -> cards */
+@media (max-width:720px){
+  table,thead,tbody,th,td,tr{display:block}
+  thead{display:none}
+  table{border:0;background:transparent;box-shadow:none;overflow:visible}
+  tbody tr{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    margin-bottom:11px;padding:13px 15px;box-shadow:var(--shadow);
+  }
+  tbody tr.today{border-left:5px solid var(--ochre)}
+  tbody td{border:0;padding:3px 0;font-size:14.5px}
+  tbody td:first-child{
+    font-family:Bitter,Georgia,serif;font-weight:700;font-size:15px;
+    padding-bottom:7px;margin-bottom:5px;border-bottom:1px dashed #ece4d5;box-shadow:none!important;
+  }
+  tbody tr.today td{background:transparent}
+  tbody td.empty{display:none}
+  tbody td[data-l]:not(:first-child)::before{
+    content:attr(data-l);display:inline-block;width:88px;color:var(--ink-3);
+    font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;
+  }
+  .stats{gap:14px}
+  #map{height:58vh}
+}
+
+.spacer{height:26px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap header-inner">
+    <div class="eyebrow" id="tripRange">23 August &ndash; September 2026</div>
+    <h1>Heather, Ossie, Garry &amp; Margaret's Nullarbor Adventure</h1>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section class="status">
+    <div class="status-label" id="statusLabel">Where they are right now</div>
+    <div class="status-now">
+      <div class="place" id="statusPlace">&mdash;</div>
+      <div class="day-of" id="statusDay"></div>
+    </div>
+    <div class="status-sub" id="statusSub"></div>
+    <div class="bar"><span id="statusBar" style="width:0%"></span></div>
+    <div class="stats">
+      <span><b id="statKm">0 km</b> travelled</span><span class="sep">&middot;</span>
+      <span><b id="statLeft">0 km</b> still to go</span><span class="sep">&middot;</span>
+      <span><b id="statStops">0</b> overnight stops</span>
+    </div>
+  </section>
+
+  <a class="latest" id="latestStrip" href="#" hidden>
+    <img id="latestThumb" alt="">
+    <span>
+      <b>Latest from the road</b>
+      <em id="latestText"></em>
+    </span>
+    <span class="latest-go">See all &rsaquo;</span>
+  </a>
+
+  <div class="tabs" role="tablist">
+    <button role="tab" id="tab-map" aria-controls="panel-map" aria-selected="true">🗺️ Map</button>
+    <button role="tab" id="tab-journal" aria-controls="panel-journal" aria-selected="false">📓 Journal <span class="tab-dot" id="tabDot"></span></button>
+    <button role="tab" id="tab-itin" aria-controls="panel-itin" aria-selected="false">📋 Itinerary</button>
+  </div>
+
+  <section class="panel" id="panel-map" role="tabpanel" aria-labelledby="tab-map">
+    <div class="map-shell">
+      <div id="map"></div>
+      <div class="map-views">
+        <button id="viewNow" class="on">📍 Where they are</button>
+        <button id="viewAll">🗺️ Whole trip</button>
+      </div>
+      <div class="map-legend">
+        <span><i style="background:#c1663f"></i>Already been</span>
+        <span><i style="background:#a8c4e0"></i>Still to come</span>
+        <span><i style="background:#adbe9d;border-radius:3px"></i>Day trip</span>
+        <span style="color:var(--ink-3)">Lines follow the actual roads</span>
+      </div>
+    </div>
+    <p class="map-hint">Tap any dot on the map to see that day's details. Pinch or scroll to zoom.</p>
+    <div class="today-card" id="todayCard"></div>
+  </section>
+
+  <section class="panel" id="panel-journal" role="tabpanel" aria-labelledby="tab-journal" hidden>
+    <div id="journalList"></div>
+  </section>
+
+  <section class="panel" id="panel-itin" role="tabpanel" aria-labelledby="tab-itin" hidden>
+    <div class="itin-note">
+      <b>The plan as it stands.</b> The most recent days are at the top &mdash; scroll down to read back through the trip. Anything still being sorted, including the drive home to Brisbane, is marked <span class="tbc">to be confirmed</span>. Tap any day to see it on the map.
+    </div>
+    <table>
+      <thead><tr>
+        <th>Date</th><th>From</th><th>To</th><th>Kms</th><th>Drive</th><th>Where they're staying</th>
+      </tr></thead>
+      <tbody id="itinBody"></tbody>
+    </table>
+  </section>
+
+  <div class="spacer"></div>
+</div>
+
+
+<div id="gallery" class="gal" hidden>
+  <button class="gal-x"  id="galClose" aria-label="Close">&times;</button>
+  <div class="gal-stage">
+    <button class="gal-nav gal-prev" id="galPrev" aria-label="Previous">&lsaquo;</button>
+    <img id="galImg" alt="">
+    <button class="gal-nav gal-next" id="galNext" aria-label="Next">&rsaquo;</button>
+  </div>
+  <div class="gal-info">
+    <div class="gal-cap"><span id="galWhere"></span><span id="galCount"></span></div>
+    <div class="gal-note" id="galNote" hidden>
+      <span id="galNoteText"></span>
+      <button class="gal-more" id="galNoteMore" hidden>Read more</button>
+    </div>
+    <button class="gal-cmt" id="galCmt" hidden></button>
+  </div>
+</div>
+
+<button id="addBtn" class="add-btn" hidden>+ Add photos</button>
+
+<button id="bell" class="bell" hidden aria-label="What's new">
+  <span class="bell-ico">🔔</span><span class="bell-n" id="bellN"></span>
+</button>
+
+<div id="newSheet" class="sheet" hidden>
+  <div class="sheet-card" role="dialog" aria-label="What's new">
+    <div class="sheet-head">
+      <b id="newTitle">Since you last looked</b>
+      <button id="newX" aria-label="Close">&times;</button>
+    </div>
+    <div id="newList" class="new-list"></div>
+  </div>
+</div>
+
+<div id="daySheet" class="sheet" hidden>
+  <div class="sheet-card" role="dialog" aria-label="Edit this day">
+    <div class="sheet-head">
+      <b id="dayTitle">Edit this day</b>
+      <button id="dayX" aria-label="Close">&times;</button>
+    </div>
+
+    <label class="fld">Where you're staying
+      <input type="text" id="dStay" placeholder="Leave empty for “to be confirmed”">
+    </label>
+    <label class="fld">Room, booking, anything worth noting
+      <input type="text" id="dRoom" placeholder="Optional">
+    </label>
+    <label class="fld">Something special that day
+      <input type="text" id="dAct" placeholder="Optional">
+    </label>
+    <label class="fld-check" id="dRestRow" hidden>
+      <input type="checkbox" id="dRest">
+      <span>No driving today — staying put</span>
+    </label>
+    <div class="fld-row" id="dDriveFlds">
+      <label class="fld">Kms
+        <input type="number" id="dKm" inputmode="numeric" placeholder="—">
+      </label>
+      <label class="fld">Drive time
+        <input type="text" id="dTime" placeholder="—">
+      </label>
+    </div>
+    <label class="fld" id="dDepartFld">Leaving about
+      <input type="time" id="dDepart" step="300">
+    </label>
+
+    <button id="daySave" class="post-btn">Save the change</button>
+    <button id="dayCancel" class="keep-btn">Leave it as it is</button>
+    <p class="sheet-note" id="dayNote">Leaving later moves the cars on the map to match.
+      The date stays put — to change which town they're driving to that day (a road closed, a booking fell through), use "Change destination" instead.</p>
+  </div>
+</div>
+
+<div id="townSheet" class="sheet" hidden>
+  <div class="sheet-card" role="dialog" aria-label="Change the destination">
+    <div class="sheet-head">
+      <b>Change the destination</b>
+      <button id="townClose" aria-label="Close">&times;</button>
+    </div>
+    <p class="ask-text" id="townFrom"></p>
+    <label class="fld">New destination town
+      <input type="text" id="tTo" placeholder="Start typing a town…" autocomplete="off">
+    </label>
+    <div id="tPicks" class="picks" hidden></div>
+    <div id="tChosen" class="chosen" hidden></div>
+
+    <button id="townSave" class="post-btn" disabled>Change it</button>
+    <p class="sheet-note" id="townNote">Roads closed, plans changed? Pick the new town and the drive works itself out — for everyone, straight away.</p>
+  </div>
+</div>
+
+<div id="nameSheet" class="sheet" hidden>
+  <div class="sheet-card" role="dialog" aria-label="Your name">
+    <div class="sheet-head">
+      <b>Who's this from?</b>
+      <button id="nameX" aria-label="Close">&times;</button>
+    </div>
+    <p class="ask-text">Pop your name in so Heather and Margaret know who's saying hello.
+      You only have to do this once on this phone.</p>
+    <input class="cmt-name" id="nameIn" placeholder="Your name" maxlength="40" autocomplete="name">
+    <button id="nameSave" class="post-btn">Save</button>
+    <p class="cmt-note" id="nameNote"></p>
+  </div>
+</div>
+
+<div id="askSheet" class="sheet" hidden>
+  <div class="sheet-card" role="dialog" aria-label="Are you sure?">
+    <div class="sheet-head">
+      <b id="askTitle">Are you sure?</b>
+      <button id="askX" aria-label="Close">&times;</button>
+    </div>
+    <p class="ask-text" id="askText"></p>
+    <button id="askYes" class="del-btn">Yes, remove it</button>
+    <button id="askNo" class="keep-btn">No, keep it</button>
+  </div>
+</div>
+
+<div id="stopSheet" class="sheet" hidden>
+  <div class="sheet-card" role="dialog" aria-label="Add a stop">
+    <div class="sheet-head">
+      <b>Add a stop</b>
+      <button id="stopClose" aria-label="Close">&times;</button>
+    </div>
+
+    <label class="fld">Date
+      <input type="date" id="sDate">
+    </label>
+    <label class="fld">Leaving from
+      <input type="text" id="sFrom" placeholder="Start typing a town…" autocomplete="off">
+    </label>
+    <div id="sPicksFrom" class="picks" hidden></div>
+    <div id="sChosenFrom" class="chosen" hidden></div>
+    <label class="fld">Driving to
+      <input type="text" id="sTo" placeholder="Start typing a town…" autocomplete="off">
+    </label>
+    <div id="sPicks" class="picks" hidden></div>
+    <div id="sChosen" class="chosen" hidden></div>
+    <div class="fld-row">
+      <label class="fld">Kms
+        <input type="number" id="sKm" inputmode="numeric" placeholder="—">
+      </label>
+      <label class="fld">Drive time
+        <input type="text" id="sTime" placeholder="—">
+      </label>
+    </div>
+    <label class="fld">Where you're staying
+      <input type="text" id="sStay" placeholder="Optional">
+    </label>
+
+    <button id="stopSave" class="post-btn" disabled>Add to the trip</button>
+    <p class="sheet-note" id="stopNote">Type the town and the distance works itself out.</p>
+  </div>
+</div>
+
+<div id="sheet" class="sheet" hidden>
+  <div class="sheet-card" role="dialog" aria-label="Add photos">
+    <div class="sheet-head">
+      <b id="sheetTitle">Add to the journal</b>
+      <button id="sheetClose" aria-label="Close">&times;</button>
+    </div>
+
+    <label class="pick" for="fileInput">
+      <span class="pick-ico">🖼️</span>
+      <span class="pick-txt"><b id="pickTitle">Choose photos</b><em id="pickSub">Pick as many as you like</em></span>
+    </label>
+    <input id="fileInput" type="file" accept="image/*" multiple hidden>
+    <div id="thumbs" class="thumbs"></div>
+
+    <label class="fld" id="postDayFld">Which day were these?
+      <select id="postDay"></select>
+    </label>
+
+    <label class="fld">A few words (optional)
+      <textarea id="postText" rows="3" placeholder="What was memorable today?"></textarea>
+    </label>
+
+    <button id="postBtn" class="post-btn" disabled>Post</button>
+    <button id="delBtn" class="del-btn" hidden>Delete this post</button>
+    <p class="sheet-note" id="sheetNote"></p>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+/* ============================================================
+   TRIP DATA  — taken from the Nullarbor Trip 2026 spreadsheet
+   ============================================================ */
+
+const PLACES = {
+  "Toowoomba":          [-27.5598, 151.9507],
+  "Goondiwindi":        [-28.5486, 150.3094],
+  "Cunnamulla":         [-28.0664, 145.6847],
+  "Tibooburra":         [-29.4386, 142.0122],
+  "Cameron Corner":     [-28.9992, 141.0011],
+  "Broken Hill":        [-31.9598, 141.4675],
+  "Port Augusta":       [-32.4922, 137.7660],
+  "Streaky Bay":        [-32.7970, 134.2130],
+  "Nullarbor Roadhouse":[-31.4436, 130.9006],
+  "Balladonia":         [-32.4500, 123.8628],
+  "Esperance":          [-33.8613, 121.8911],
+  "Albany":             [-35.0228, 117.8814],
+  "Margaret River":     [-33.9550, 115.0750]
+};
+
+// Real road geometry between each pair of towns (OSRM / OpenStreetMap).
+// Stored as [lon,lat] exactly as returned; flipped to Leaflet order at draw time.
+const ROADS = {"legs":[{"from":"Toowoomba","to":"Goondiwindi","pts":[[151.95064,-27.55977],[151.93264,-27.56231],[151.89505,-27.60597],[151.76791,-27.62012],[151.72327,-27.65038],[151.71461,-27.67007],[151.66923,-27.69588],[151.64077,-27.69853],[151.54882,-27.75344],[151.44497,-27.75561],[151.41502,-27.78892],[151.36227,-27.80905],[151.32398,-27.85533],[151.26938,-27.87897],[151.23769,-27.87424],[151.17313,-27.91973],[151.16774,-27.93513],[151.10403,-27.975],[151.00567,-27.96677],[150.92515,-28.00698],[150.89849,-28.00112],[150.80246,-28.03886],[150.74004,-28.08017],[150.67787,-28.15369],[150.57132,-28.17274],[150.5377,-28.1643],[150.46404,-28.18003],[150.41313,-28.22645],[150.35412,-28.32411],[150.3384,-28.38182],[150.30667,-28.40362],[150.28559,-28.53323],[150.3094,-28.5486]]},{"from":"Goondiwindi","to":"Cunnamulla","pts":[[150.3094,-28.548599],[150.241685,-28.504732],[150.110487,-28.498891],[149.927856,-28.421844],[149.811266,-28.421778],[149.731918,-28.443161],[149.679363,-28.419124],[149.627363,-28.42299],[149.523924,-28.471864],[149.419542,-28.483661],[149.327752,-28.456754],[149.24282,-28.40441],[149.041862,-28.354802],[148.849063,-28.353813],[148.797108,-28.314983],[148.652485,-28.072491],[148.579579,-28.034748],[148.429691,-28.024316],[148.295618,-27.963601],[148.105161,-27.961992],[147.9,-27.972],[147.72,-27.992],[147.591821,-28.008235],[147.483136,-28.033346],[147.3,-28.048],[147.05,-28.056],[146.8,-28.03],[146.56,-28.01],[146.293653,-28.002588],[146.157968,-27.962694],[145.94707,-28.04134],[145.684277,-28.065996]]},{"from":"Cunnamulla","to":"Tibooburra","pts":[[145.684277,-28.065996],[145.522961,-28.091972],[145.353196,-28.055688],[145.133511,-28.14936],[145.001853,-28.154121],[144.909832,-28.330012],[144.812755,-28.417025],[144.7586,-28.684728],[144.480138,-28.856628],[144.401473,-28.998975],[144.455661,-29.048775],[144.491478,-29.166918],[144.48064,-29.251437],[144.419599,-29.450989],[144.310826,-29.569818],[144.297864,-29.64806],[144.246136,-29.717171],[144.156539,-29.696294],[144.107534,-29.722156],[143.640446,-29.70389],[142.845759,-29.726606],[142.808478,-29.736382],[142.777747,-29.778302],[142.698329,-29.788756],[142.654913,-29.780516],[142.655014,-29.732288],[142.460518,-29.668167],[142.394246,-29.680197],[142.336361,-29.613681],[142.33721,-29.563812],[142.242829,-29.493808],[142.099782,-29.484485],[142.043699,-29.438367],[142.013434,-29.43798]]},{"from":"Tibooburra","to":"Broken Hill","pts":[[142.013434,-29.43798],[141.965553,-29.518139],[141.89238,-29.586651],[141.870347,-29.658906],[141.900946,-29.701147],[141.894157,-29.732059],[141.933671,-29.755674],[141.931099,-29.790383],[142.004696,-29.863344],[142.030428,-29.928772],[142.060801,-29.935397],[142.038336,-30.063026],[142.119538,-30.150654],[142.102141,-30.172681],[142.111441,-30.239901],[142.042183,-30.298462],[142.037148,-30.457031],[141.984847,-30.530979],[141.966753,-30.616092],[141.813286,-30.780414],[141.7677,-30.936465],[141.79753,-30.974827],[141.780735,-31.026911],[141.68753,-31.107145],[141.61442,-31.266025],[141.611607,-31.39027],[141.669889,-31.527094],[141.637975,-31.578164],[141.621183,-31.683037],[141.520128,-31.784175],[141.510679,-31.891882],[141.467283,-31.959608]]},{"from":"Broken Hill","to":"Port Augusta","pts":[[141.467283,-31.959608],[141.191529,-32.045951],[141.152362,-32.034858],[140.756207,-32.124092],[140.60946,-32.181134],[140.470949,-32.209366],[140.333469,-32.279884],[140.210538,-32.312096],[140.086829,-32.402173],[139.771676,-32.493587],[139.568774,-32.57812],[139.346324,-32.706058],[139.209681,-32.833975],[139.07731,-32.866818],[138.980069,-32.957469],[138.929129,-32.948663],[138.804846,-32.967759],[138.733918,-32.850731],[138.608875,-32.730651],[138.564626,-32.747218],[138.242894,-32.668267],[138.111358,-32.66603],[138.095654,-32.646923],[138.057601,-32.6591],[138.012986,-32.609273],[137.916095,-32.627514],[137.855254,-32.5419],[137.766122,-32.492353]]},{"from":"Port Augusta","to":"Streaky Bay","pts":[[137.766122,-32.492353],[137.723262,-32.48549],[137.569668,-32.61887],[137.358189,-32.634026],[137.134548,-32.719782],[137.015794,-32.85271],[136.835033,-33.009454],[136.708914,-33.085458],[136.621045,-33.11551],[136.434879,-33.125325],[136.324805,-33.228035],[135.935935,-33.192444],[135.881197,-33.161388],[135.780985,-33.141294],[135.719788,-33.154557],[135.677477,-33.137516],[135.556431,-33.137298],[135.428932,-33.022372],[135.390623,-33.019221],[135.201774,-32.913932],[135.186828,-32.879326],[135.112307,-32.823851],[134.862746,-32.725307],[134.584676,-32.765822],[134.431753,-32.734059],[134.214118,-32.79666]]},{"from":"Streaky Bay","to":"Nullarbor Roadhouse","pts":[[134.214118,-32.79666],[134.299735,-32.742918],[134.304349,-32.66948],[134.271483,-32.545236],[134.177644,-32.44808],[133.972627,-32.384321],[133.783322,-32.161979],[133.734715,-32.126838],[133.673736,-32.121247],[133.672697,-32.085616],[133.648922,-32.067988],[133.402198,-31.941678],[132.993605,-31.926515],[132.777227,-31.829787],[132.615118,-31.84119],[132.258633,-31.825296],[132.055396,-31.621489],[131.95844,-31.550135],[131.606601,-31.407288],[131.453713,-31.371597],[131.365458,-31.358036],[131.141129,-31.373594],[130.926591,-31.445367],[130.872222,-31.445226],[130.897073,-31.439888]]},{"from":"Nullarbor Roadhouse","to":"Balladonia","pts":[[130.897073,-31.439888],[130.739957,-31.521773],[130.379684,-31.576387],[129.894107,-31.576271],[129.135981,-31.659862],[129.014074,-31.633381],[128.383119,-31.808156],[127.523028,-31.916614],[126.926566,-31.892437],[126.572789,-31.987943],[125.943589,-32.039288],[125.487655,-32.269464],[123.864253,-32.456314]]},{"from":"Balladonia","to":"Esperance","pts":[[123.864253,-32.456314],[123.830143,-32.46481],[123.077256,-32.076957],[122.804357,-32.011106],[122.684327,-32.070918],[122.255555,-32.057281],[121.98389,-32.091232],[121.813722,-32.143174],[121.77845,-32.18529],[121.758505,-32.394666],[121.609562,-32.523371],[121.544012,-32.632314],[121.535354,-32.744094],[121.718821,-33.18152],[121.715606,-33.341372],[121.689724,-33.373631],[121.737658,-33.467841],[121.715075,-33.513882],[121.832706,-33.684432],[121.899698,-33.838794],[121.8911,-33.861321]]},{"from":"Esperance","to":"Albany","pts":[[121.8911,-33.861321],[121.887427,-33.838973],[121.771119,-33.76494],[121.558126,-33.699253],[121.473001,-33.694891],[121.087065,-33.774221],[120.800396,-33.677794],[120.444982,-33.647096],[120.341214,-33.594758],[120.182998,-33.599439],[120.102463,-33.569519],[119.989979,-33.573412],[119.882272,-33.603082],[119.830864,-33.640149],[119.50901,-33.731161],[119.062856,-33.905844],[119.003978,-33.906962],[118.920644,-33.937839],[118.953808,-34.013124],[118.935542,-34.210841],[118.845116,-34.221185],[118.809435,-34.310148],[118.749841,-34.355322],[118.731743,-34.404343],[118.67667,-34.431658],[118.491313,-34.597024],[118.351476,-34.639454],[118.308601,-34.749093],[118.256371,-34.810059],[118.135402,-34.859042],[118.049835,-34.858994],[117.914766,-34.929031],[117.86375,-35.004993],[117.881391,-35.022678]]},{"from":"Albany","to":"Margaret River","pts":[[117.881391,-35.022678],[117.851241,-34.9845],[117.809302,-34.955592],[117.781135,-34.894657],[117.747204,-34.850861],[117.686095,-34.713471],[117.659955,-34.614961],[117.641627,-34.61599],[117.572857,-34.656223],[117.527409,-34.660369],[117.464548,-34.65037],[117.364734,-34.618822],[117.312152,-34.591522],[117.157921,-34.552497],[117.120991,-34.53175],[116.941423,-34.493356],[116.897258,-34.475105],[116.799481,-34.468909],[116.746363,-34.440387],[116.624924,-34.43937],[116.504538,-34.386314],[116.4146,-34.389276],[116.389064,-34.376247],[116.372885,-34.32883],[116.330886,-34.345929],[116.3068,-34.335206],[116.252973,-34.335431],[116.21003,-34.273624],[116.194795,-34.272361],[116.170991,-34.251475],[116.143627,-34.249361],[116.149165,-34.233986],[116.119055,-34.222075],[116.085641,-34.230995],[116.025981,-34.229794],[115.927025,-34.213245],[115.892418,-34.197716],[115.826067,-34.265612],[115.761195,-34.289182],[115.756357,-34.281987],[115.669889,-34.280221],[115.55625,-34.17171],[115.504674,-34.151129],[115.465498,-34.16086],[115.201385,-34.160304],[115.163875,-34.182644],[115.099722,-34.20064],[115.09724,-34.163862],[115.1139,-34.124646],[115.100787,-34.028154],[115.075008,-33.955137]]}],"spur":{"from":"Tibooburra","to":"Cameron Corner","pts":[[142.013434,-29.43798],[142.009566,-29.435297],[142.003197,-29.445789],[141.952396,-29.438844],[141.930344,-29.444751],[141.884817,-29.439601],[141.866758,-29.424929],[141.814034,-29.353288],[141.740766,-29.306982],[141.700455,-29.287684],[141.682075,-29.274322],[141.668056,-29.248187],[141.648544,-29.249489],[141.534711,-29.219806],[141.452537,-29.226858],[141.388721,-29.211217],[141.363906,-29.213816],[141.333381,-29.231075],[141.317123,-29.230177],[141.318314,-29.184077],[141.287126,-29.130034],[141.261062,-29.133516],[141.224998,-29.148592],[141.18738,-29.132469],[141.183445,-29.11714],[141.202885,-29.094595],[141.212479,-29.062696],[141.197054,-29.034157],[141.185429,-29.023404],[141.183833,-29.013398],[141.162468,-29.015916],[141.155122,-29.006336],[141.140035,-29.000658],[141.104344,-29.003677],[141.097536,-29.000617],[141.078817,-29.016373],[141.058985,-29.000008],[141.038804,-29.00634],[141.020994,-29.002376],[141.007307,-29.00532],[141.0011,-28.999026]]}};
+
+// d: date  from/to: towns  km/time: the drive  stay: accommodation  room: room detail
+// side: a day trip that returns to the same bed   tbc: not locked in yet
+const DAYS = [
+  {d:"2026-08-23", from:"Toowoomba",   to:"Goondiwindi",         km:220, time:"2h 30m", stay:"Macintyre Motor Inn", depart:"12:00"},
+  {d:"2026-08-24", from:null,          to:"Goondiwindi",         km:0,   time:null,     stay:"Macintyre Motor Inn", act:"Goondiwindi Cotton Tour"},
+  {d:"2026-08-25", from:"Goondiwindi", to:"Cunnamulla",          km:494, time:"5h 17m", stay:"Warrego Hotel Motel"},
+  {d:"2026-08-26", from:"Cunnamulla",  to:"Tibooburra",          km:562, time:"6h 24m", stay:"Tibooburra Beds & Camping"},
+  {d:"2026-08-27", from:"Tibooburra",  to:"Cameron Corner",      km:172, time:"2h 17m", stay:"Tibooburra Beds & Camping", side:true,
+                   act:"Out to Cameron Corner, where Queensland, New South Wales and South Australia meet"},
+  {d:"2026-08-28", from:"Tibooburra",  to:"Broken Hill",         km:333, time:"3h 26m", stay:"Sturt Motel", room:"Queen Superior Room with kitchenette"},
+  {d:"2026-08-29", from:null,          to:"Broken Hill",         km:0,   time:null,     stay:"Sturt Motel", room:"Queen Superior Room with kitchenette"},
+  {d:"2026-08-30", from:"Broken Hill", to:"Port Augusta",        km:413, time:"4h 33m", stay:"Standpipe Golf Motor Inn", room:"2 × Queen rooms"},
+  {d:"2026-08-31", from:null,          to:"Port Augusta",        km:0,   time:null,     stay:"Standpipe Golf Motor Inn", room:"2 × Queen rooms"},
+  {d:"2026-09-01", from:"Port Augusta",to:"Streaky Bay",         km:390, time:"4h 6m",  stay:"Streaky Bay Motel and Villas", room:"2 Deluxe Queen rooms"},
+  {d:"2026-09-02", from:"Streaky Bay", to:"Nullarbor Roadhouse", km:404, time:"4h 10m", stay:"Nullarbor Roadhouse", room:"2 × Queen motel rooms"},
+  {d:"2026-09-03", from:"Nullarbor Roadhouse", to:"Balladonia",  km:687, time:"7h",     stay:"Balladonia Motel", room:"1 Queen, 1 Queen + 1 Single"},
+  {d:"2026-09-04", from:"Balladonia",  to:"Esperance",           km:422, time:"4h 25m", stay:"The Jetty Resort", room:"2 bed, 2 bath apartment"},
+  {d:"2026-09-05", from:null,          to:"Esperance",           km:0,   time:null,     stay:"The Jetty Resort", room:"2 bed, 2 bath apartment"},
+  {d:"2026-09-06", from:null,          to:"Esperance",           km:0,   time:null,     stay:"The Jetty Resort", room:"2 bed, 2 bath apartment", act:"Hoping to get out to Lake Hillier — the pink lake"},
+  {d:"2026-09-07", from:"Esperance",   to:"Albany",              km:480, time:"5h",     stay:null, tbc:true},
+  {d:"2026-09-08", from:null,          to:"Albany",              km:0,   time:null,     stay:null, tbc:true},
+  {d:"2026-09-09", from:null,          to:"Albany",              km:0,   time:null,     stay:null, tbc:true},
+  {d:"2026-09-10", from:"Albany",      to:"Margaret River",      km:null,time:null,     stay:null, tbc:true}
+];
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+
+/* Stops added from the road. Held locally for now; this is the one place
+   that changes when the Supabase keys land — it becomes a fetch instead. */
+function loadExtra(key){ try { return JSON.parse(localStorage.getItem(key) || "[]"); } catch(e){ return []; } }
+
+/* ============================================================
+   SUPABASE  — put the two values in and the trip goes live.
+   Leave them blank and everything still works on this device only.
+   ============================================================ */
+const SUPABASE_URL = "https://fmmltsrmyhxtmqseuxck.supabase.co";
+const SUPABASE_KEY = "sb_publishable_LgEQDgcRZkGh_FMvGlbGXA_7vQlyqe1";
+const LIVE = !!(SUPABASE_URL && SUPABASE_KEY);
+
+const sbHead = (extra = {}) => {
+  const h = { apikey:SUPABASE_KEY, ...extra };
+  if (SUPABASE_KEY.startsWith("eyJ")) h.Authorization = "Bearer " + SUPABASE_KEY;  // legacy JWT keys
+  return h;
+};
+
+async function sbGet(table, query){
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${query}`,
+                        {headers:sbHead({ "Content-Type":"application/json" })});
+  if (!r.ok) throw new Error(`${table} ${r.status}`);
+  return r.json();
+}
+
+async function sbInsert(table, row){
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
+    method:"POST",
+    headers:sbHead({ "Content-Type":"application/json", Prefer:"return=representation" }),
+    body:JSON.stringify(row)});
+  if (!r.ok) throw new Error(await r.text());
+  return (await r.json())[0];
+}
+
+async function sbPatch(table, query, row){
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${query}`, {
+    method:"PATCH",
+    headers:sbHead({ "Content-Type":"application/json", Prefer:"return=representation" }),
+    body:JSON.stringify(row)});
+  if (!r.ok) throw new Error(await r.text());
+  const rows = await r.json();
+  if (!rows.length) throw new Error("refused");
+  return rows[0];
+}
+
+/* One row per day, replaced wholesale each time she saves it */
+async function sbUpsert(table, row){
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
+    method:"POST",
+    headers:sbHead({ "Content-Type":"application/json",
+                     Prefer:"resolution=merge-duplicates,return=representation" }),
+    body:JSON.stringify(row)});
+  if (!r.ok) throw new Error(await r.text());
+  return (await r.json())[0];
+}
+
+/* The database only allows a change for the first couple of days. After that
+   it quietly refuses, so we ask for the row back and treat "nothing came
+   back" as a refusal rather than a success. */
+async function sbDelete(table, query){
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${query}`, {
+    method:"DELETE",
+    headers:sbHead({ "Content-Type":"application/json", Prefer:"return=representation" })});
+  if (!r.ok) throw new Error(await r.text());
+  const rows = await r.json().catch(() => []);
+  if (!rows.length) throw new Error("refused");
+  return rows;
+}
+
+/* tidy up a photo file once nothing points at it any more.
+   Best effort only — an orphaned file is harmless, a failed post is not. */
+async function sbDropPhoto(url){
+  const path = String(url).split("/object/public/roadtrip/")[1];
+  if (!path) return;
+  try {
+    await fetch(`${SUPABASE_URL}/storage/v1/object/roadtrip/${path}`,
+                { method:"DELETE", headers:sbHead() });
+  } catch(e){ /* leave it, it costs nothing */ }
+}
+
+async function sbUpload(blob, name){
+  const path = `${Date.now()}-${name}`.replace(/[^A-Za-z0-9._-]/g, "_");
+  const r = await fetch(`${SUPABASE_URL}/storage/v1/object/roadtrip/${path}`, {
+    method:"POST",
+    headers:sbHead({ "Content-Type":blob.type || "image/jpeg" }),
+    body:blob});
+  if (!r.ok) throw new Error(`upload ${r.status}`);
+  return `${SUPABASE_URL}/storage/v1/object/public/roadtrip/${path}`;
+}
+
+/* Show what is cached straight away, then quietly check the server.
+   If anything is new, cache it and refresh once — so the page is instant
+   offline and still catches up the moment there is signal. */
+async function syncFromServer(){
+  if (!LIVE){ landOnStop(true); return; }
+  try {
+    // the comments table may not exist yet — if it doesn't, the rest of the
+    // trip must still sync, so that one fetch is allowed to come back empty
+    const [posts, stops, cmts, edits, towns, route, likes] = await Promise.all([
+      sbGet("roadtrip_posts", "select=*&order=day.asc,created_at.asc"),
+      sbGet("roadtrip_stops", "select=*&order=day.asc"),
+      sbGet("roadtrip_comments", "select=*&order=created_at.asc").catch(() => null),
+      sbGet("roadtrip_day_edits", "select=*").catch(() => null),
+      sbGet("roadtrip_town_changes", "select=*").catch(() => null),
+      sbGet("roadtrip_route_changes", "select=*").catch(() => null),
+      sbGet("roadtrip_likes", "select=*").catch(() => null)
+    ]);
+    const p = posts.map(x => ({ id:x.id, who:x.author, date:x.day, place:x.place,
+                                text:x.note || "", photos:x.photos || [], at:x.created_at }));
+    const st = stops.map(x => ({ d:x.day, from:x.from_town, to:x.to_town, km:x.km,
+                                 time:x.drive_time, stay:x.stay, added:true }));
+    const legs   = stops.filter(x => x.road).map(x => ({from:x.from_town, to:x.to_town, pts:x.road, guessed:x.guessed}));
+    const places = stops.filter(x => x.lat != null).map(x => [x.to_town, x.lat, x.lon]);
+    const c = (cmts || []).map(x => ({ id:x.id, post:x.post_id, who:x.author,
+                                      text:x.body, at:x.created_at }));
+    const ed = (edits || []).map(x => ({ d:x.day, stay:x.stay, room:x.room, act:x.act,
+                                        km:x.km, time:x.drive_time, depart:x.depart_min, rest:!!x.rest }));
+    const tc = (towns || []).map(x => ({ old:x.old_town, new:x.new_town, lat:x.lat, lon:x.lon,
+                                        legs:x.legs || [], at:x.updated_at,
+                                        km_in:x.km_in, time_in:x.time_in,
+                                        km_out:x.km_out, time_out:x.time_out }));
+    const rc = (route || []).map(x => ({ d:x.day, from:x.from_town, to:x.to_town,
+                                        lat:x.lat, lon:x.lon, km:x.km, time:x.drive_time,
+                                        legs:x.legs || [], oldFrom:x.old_from, oldTo:x.old_to,
+                                        wasSide:!!x.was_side }));
+    const lk = (likes || []).map(x => ({ post:x.post_id, who:x.liker, name:x.liker_name || null, at:x.created_at }));
+    const fresh  = JSON.stringify({p, st, legs, places, c, ed, tc, rc, lk});
+    if (fresh !== localStorage.getItem("nullarbor_cache")){
+      localStorage.setItem("nullarbor_cache",  fresh);
+      localStorage.setItem("nullarbor_posts",  JSON.stringify(p));
+      if (cmts)  localStorage.setItem("nullarbor_comments", JSON.stringify(c));
+      if (edits) localStorage.setItem("nullarbor_edits",    JSON.stringify(ed));
+      if (towns) localStorage.setItem("nullarbor_towns",    JSON.stringify(tc));
+      if (route) localStorage.setItem("nullarbor_route",    JSON.stringify(rc));
+      if (likes) localStorage.setItem("nullarbor_likes",    JSON.stringify(lk));
+      localStorage.setItem("nullarbor_stops",  JSON.stringify(st));
+      localStorage.setItem("nullarbor_legs",   JSON.stringify(legs));
+      localStorage.setItem("nullarbor_places", JSON.stringify(places));
+      // reload to show it — but only once per *specific* change, tracked by
+      // what that change actually was, not just "have we ever reloaded this
+      // session". Otherwise a change from someone else, or made straight in
+      // Supabase, silently updates the cache in the background and never
+      // makes it to the screen until a second, unexplained refresh.
+      if (sessionStorage.getItem("nullarbor_seenFor") !== fresh){
+        sessionStorage.setItem("nullarbor_seenFor", fresh);
+        location.reload();
+        return;                       // the next load takes it from here
+      }
+    }
+  } catch(e){ /* no signal — the cached trip is still on screen */ }
+  landOnStop(true);
+}
+const EXTRA_STOPS = loadExtra("nullarbor_stops");
+const EXTRA_LEGS  = loadExtra("nullarbor_legs");
+loadExtra("nullarbor_places").forEach(([name,lat,lon]) => { PLACES[name] = [lat,lon]; });
+DAYS.push(...EXTRA_STOPS);
+DAYS.sort((a,b) => a.d.localeCompare(b.d));
+ROADS.legs.push(...EXTRA_LEGS);
+
+/* A destination changed on the road, a town skipped entirely — kept for the
+   trip already in progress: an older change that renamed a town everywhere
+   it appeared. Newer changes use the day-scoped patch below instead, which
+   also works for a stop that's still valid on other days. Oldest first, so a
+   town swapped twice lands right. */
+const TOWN_CHANGES = loadExtra("nullarbor_towns").slice()
+  .sort((a,b) => String(a.at||"").localeCompare(String(b.at||"")));
+TOWN_CHANGES.forEach(tc => {
+  DAYS.forEach(d => {
+    if (d.to === tc.old){
+      d.to = tc.new;
+      if (tc.km_in != null){ d.km = tc.km_in; d.time = tc.time_in; }
+    }
+    if (d.from === tc.old){
+      d.from = tc.new;
+      if (!d.side && tc.km_out != null){ d.km = tc.km_out; d.time = tc.time_out; }
+    }
+  });
+  if (tc.lat != null) PLACES[tc.new] = [tc.lat, tc.lon];
+  ROADS.legs = ROADS.legs.filter(l => l.from !== tc.old && l.to !== tc.old);
+  (tc.legs || []).forEach(l => ROADS.legs.push(l));
+});
+
+/* A single day's destination changes — a road closed, a town skipped just
+   for that stretch, a rest day turned into a drive after all. Scoped to the
+   day itself (never a blanket rename), so a town that's genuinely visited on
+   other days is never touched by mistake. Cascades forward only as far as
+   the days that were actually continuing on from here. */
+const ROUTE_CHANGES = loadExtra("nullarbor_route");
+ROUTE_CHANGES.forEach(rc => {
+  const day = DAYS.find(x => x.d === rc.d);
+  if (!day) return;
+  if (rc.from != null) day.from = rc.from;
+  if (rc.to   != null) day.to   = rc.to;
+  if (rc.km   != null){ day.km = rc.km; day.time = rc.time; }
+  if (rc.lat  != null) PLACES[rc.to] = [rc.lat, rc.lon];
+  // a day trip that's been turned into a real destination isn't a day
+  // trip any more — it takes its place in the main route from here on
+  if (rc.wasSide) day.side = false;
+  // the specific road this replaces comes off the map — not every road
+  // touching the old town, just the one hop that's no longer being driven
+  if (rc.oldFrom != null && rc.oldTo != null)
+    ROADS.legs = ROADS.legs.filter(l => !(l.from === rc.oldFrom && l.to === rc.oldTo));
+  (rc.legs || []).forEach(l => ROADS.legs.push(l));
+});
+
+// the plan as it stands once the road changes above are laid over it — so
+// "Edit this day" can tell a day that's driving from one that's genuinely at
+// rest, and can put the right kms back if a "staying put" flag is undone
+DAYS.forEach(d => { d.hadFrom = !!d.from; d.baseKm = d.km; d.baseTime = d.time; d.originalFrom = d.from; });
+
+/* Anything changed about a day itself — a booking that fell through, a
+   longer drive than the map promised, a night stayed put instead — is held
+   as a small patch against the day and laid over the plan here last, so a
+   hand-typed correction always has the final say. */
+const DAY_EDITS = loadExtra("nullarbor_edits");
+DAY_EDITS.forEach(e => {
+  const day = DAYS.find(x => x.d === e.d);
+  if (!day) return;
+  day.stay = e.stay; day.room = e.room; day.act = e.act;
+  if (e.rest){
+    // the drive that was planned isn't happening — they're staying put,
+    // in the town they left FROM, not the one they never reached.
+    // km:0 (not null) matches how the built-in rest days read "—", not "TBC"
+    if (day.originalFrom) day.to = day.originalFrom;
+    day.from = null; day.km = 0; day.time = null; day.restForced = true;
+  } else {
+    day.km = e.km; day.time = e.time;
+  }
+  if (e.depart != null) day.depart = e.depart;
+});
+
+const dt = s => { const [y,m,d] = s.split("-").map(Number); return new Date(y, m-1, d); };
+/* ---- the trip runs on their clock, not the reader's ----------------------
+   Someone following from Brisbane and someone following from Perth should see
+   the same thing: where the cars are in the travellers' own time zone. The
+   zone is worked out from how far west they are that day. */
+const tzFor = name => {
+  if (name === "Broken Hill") return 9.5;              // NSW, but on Adelaide time
+  const c = PLACES[name];
+  const lon = c ? c[1] : 151;
+  if (lon >= 141) return 10;                           // Queensland and NSW
+  if (lon >= 129) return 9.5;                          // South Australia
+  return 8;                                            // Western Australia
+};
+
+// the wall clock in a given zone: their date, and minutes since their midnight
+const clockIn = off => {
+  const d = new Date(Date.now() + off * 3600e3);
+  return { day: d.toISOString().slice(0,10),
+           mins: d.getUTCHours() * 60 + d.getUTCMinutes() };
+};
+
+/* Which day is it for them? Start on eastern time, then re-ask using the zone
+   of wherever that lands — the two only disagree in the small hours. */
+let TRIP_TZ = 10;
+let TRIP = clockIn(TRIP_TZ);
+(() => {
+  const guess = DAYS.find(x => x.d === TRIP.day);
+  if (!guess) return;
+  const off = tzFor(guess.to);
+  if (off !== TRIP_TZ){ TRIP_TZ = off; TRIP = clockIn(off); }
+})();
+
+const today = dt(TRIP.day);
+const fmtLong  = d => d.toLocaleDateString("en-AU",{weekday:"long", day:"numeric", month:"long"});
+const fmtShort = d => d.toLocaleDateString("en-AU",{weekday:"short", day:"numeric", month:"short"});
+const num = n => n.toLocaleString("en-AU");
+
+DAYS.forEach((x,i) => { x.n = i+1; x.date = dt(x.d); });
+
+const START = DAYS[0].date, END = DAYS[DAYS.length-1].date;
+const TOTAL_KM = DAYS.reduce((s,x) => s + (x.km||0), 0);
+
+// which day are we on? -1 = not departed yet, DAYS.length = finished
+const idx = (() => {
+  if (today < START) return -1;
+  if (today > END) return DAYS.length;
+  return DAYS.findIndex(x => x.date.getTime() === today.getTime());
+})();
+const current = idx >= 0 && idx < DAYS.length ? DAYS[idx] : null;
+const daysUntil = Math.round((START - today) / 86400000);
+
+/* ============================================================
+   WHERE THEY ARE RIGHT NOW
+   The old version jumped them to tonight's town the moment the date
+   ticked over, so they "arrived" at midnight. This walks them along the
+   day instead: parked until they set off, creeping down the road while
+   they drive, and there for the evening once they're in.
+   ============================================================ */
+const DEPART_MIN = 9 * 60;        // they like a sleep-in, so nine unless a day says otherwise
+
+// "12:00" or plain minutes, whichever a day happens to carry
+const parseClock = v => {
+  if (v == null || v === "") return null;
+  if (typeof v === "number") return v;
+  const m = /^(\d{1,2}):(\d{2})$/.exec(String(v).trim());
+  return m ? +m[1] * 60 + +m[2] : null;
+};
+const departOf = day => { const d = parseClock(day && day.depart); return d == null ? DEPART_MIN : d; };
+
+const driveMins = day => {
+  if (day.time){
+    const h = /(\d+)\s*h/.exec(day.time), m = /(\d+)\s*m/.exec(day.time);
+    const mins = (h ? +h[1] * 60 : 0) + (m ? +m[1] : 0);
+    if (mins) return mins;
+  }
+  return day.km ? Math.round(day.km / 85 * 60) : 0;   // a fair average out there
+};
+
+// half an hour of fuel, food and photographs for every two hours of driving
+const breakMins = drive => Math.round(drive / 120 * 30);
+
+function progressNow(){
+  const day = current;
+  if (!day) return null;
+
+  const drive  = driveMins(day);
+  const rest   = !day.from || !day.km;
+  const depart = departOf(day);
+  const arrive = depart + drive + breakMins(drive);
+  TRIP = clockIn(TRIP_TZ);            // read the clock now, not when the page opened
+  const mins = TRIP.mins;
+
+  if (rest)            return { state:"resting", at:day.to, f:0, depart, arrive };
+  if (day.side){
+    // out to the corner for the middle of the day, back to base by evening
+    if (mins < depart)  return { state:"before", at:day.from, f:0, depart, arrive };
+    if (mins > 16 * 60) return { state:"back",   at:day.from, f:0, depart, arrive };
+    return { state:"out", at:day.to, f:1, depart, arrive };
+  }
+  if (mins <= depart) return { state:"before",  at:day.from, f:0, depart, arrive };
+  if (mins >= arrive) return { state:"arrived", at:day.to,   f:1, depart, arrive };
+
+  return { state:"driving", at:null, depart, arrive,
+           f: Math.min(1, Math.max(0, (mins - depart) / (arrive - depart))) };
+}
+
+let NOW = progressNow();
+
+const asClock = mins => {
+  const h = Math.floor(mins / 60) % 24, m = Math.round(mins % 60);
+  const ap = h < 12 ? "am" : "pm", hh = h % 12 === 0 ? 12 : h % 12;
+  return `${hh}${m ? ":" + String(m).padStart(2,"0") : ""}${ap}`;
+};
+
+/* every finished day, plus however much of today they have actually driven */
+const countDone = () => DAYS.filter(x => x.date < today).reduce((s,x) => s + (x.km||0), 0)
+                      + (current && NOW ? Math.round((current.km || 0) * (NOW.f || 0)) : 0);
+let doneKm = countDone();
+
+/* ---- the dates above the title, taken from the itinerary itself ----
+   While the tail end is still unconfirmed it names the month only, so it
+   doesn't promise a homecoming date nobody has picked yet. Add a stop in
+   October and it follows along; confirm the last night and it firms up
+   into a proper date. */
+(function tripRange(){
+  const el = document.getElementById("tripRange");
+  if (!el) return;
+  const last  = DAYS[DAYS.length - 1];
+  const vague = !last.stay;
+  const from  = START.toLocaleDateString("en-AU", { day:"numeric", month:"long" });
+  const to    = END.toLocaleDateString("en-AU",
+                  vague ? { month:"long" } : { day:"numeric", month:"long" });
+  el.textContent = `${from} – ${to} ${END.getFullYear()}`;
+})();
+
+/* ============================================================
+   STATUS PANEL
+   ============================================================ */
+function drawStatus(){
+  const place = document.getElementById("statusPlace");
+  const badge = document.getElementById("statusDay");
+  const sub   = document.getElementById("statusSub");
+  const label = document.getElementById("statusLabel");
+
+  if (idx === -1) {
+    label.textContent = "The adventure begins";
+    place.textContent = daysUntil === 1 ? "Tomorrow!" : `${daysUntil} days to go`;
+    badge.textContent = "Not departed";
+    sub.textContent   = `All four leave Toowoomba on ${fmtLong(START)}, heading for Goondiwindi.`;
+  } else if (idx === DAYS.length) {
+    label.textContent = "Journey complete";
+    place.textContent = "Home again";
+    badge.textContent = `${DAYS.length} days on the road`;
+    sub.textContent   = `${num(TOTAL_KM)} km and a lot of country between here and there.`;
+  } else {
+    label.textContent = "Where they are right now";
+    badge.textContent = `Day ${current.n} of ${DAYS.length}`;
+    const n = NOW || { state:"arrived", f:1 };
+    const kmSoFar = Math.round((current.km || 0) * n.f);
+
+    if (n.state === "resting"){
+      place.textContent = current.to;
+      sub.textContent = `A rest day in ${current.to}. No driving today.`;
+    } else if (n.state === "out"){
+      place.textContent = current.to;
+      sub.textContent = `Out at ${current.to} for the day — ${current.km} km each way, back to ${current.from} tonight.`;
+    } else if (n.state === "back"){
+      place.textContent = current.from;
+      sub.textContent = `Back in ${current.from} after the run out to ${current.to}.`;
+    } else if (n.state === "before"){
+      place.textContent = current.from;
+      sub.textContent = `Still in ${current.from} — setting off about ${asClock(n.depart)} for ${current.to}, `
+                      + `${num(current.km)} km and about ${current.time} behind the wheel.`;
+    } else if (n.state === "driving"){
+      place.textContent = "On the road";
+      sub.textContent = `Somewhere between ${current.from} and ${current.to} — roughly ${num(kmSoFar)} of `
+                      + `${num(current.km)} km done, and into ${current.to} around ${asClock(n.arrive)}.`;
+    } else {
+      place.textContent = current.to;
+      sub.textContent = `Into ${current.to} around ${asClock(n.arrive)} — ${num(current.km)} km from ${current.from}.`;
+    }
+  }
+
+  const pct = idx === -1 ? 0 : Math.min(100, Math.round((doneKm / TOTAL_KM) * 100));
+  document.getElementById("statusBar").style.width = pct + "%";
+  document.getElementById("statKm").textContent    = num(doneKm) + " km";
+  document.getElementById("statLeft").textContent  = num(Math.max(0, TOTAL_KM - doneKm)) + " km";
+  document.getElementById("statStops").textContent = new Set(DAYS.map(x => x.to)).size;
+}
+drawStatus();
+
+/* ============================================================
+   TODAY CARD
+   ============================================================ */
+(function todayCard(){
+  const el = document.getElementById("todayCard");
+  const d = current || DAYS[0];
+  const label   = idx === -1 ? "The first day"
+                : idx === DAYS.length ? "The trip in full"
+                : "Today's itinerary";
+  const heading = idx === -1 ? `First stop — ${d.to}`
+                : idx === DAYS.length ? "The whole trip, start to finish"
+                : `${fmtLong(d.date)}`;
+  let body = "";
+  if (idx >= 0 && idx < DAYS.length) {
+    body += `<p><strong>${d.side ? "Day trip to" : d.from ? "Driving to" : "Staying in"} ${d.to}</strong>`;
+    if (d.km) body += ` · ${d.km} km${d.time ? " · " + d.time : ""}`;
+    body += `</p>`;
+    if (d.stay) body += `<p>🛏️ ${d.stay}${d.room ? " — " + d.room : ""}</p>`;
+    else        body += `<p>🛏️ Accommodation still to be confirmed</p>`;
+    if (d.act)  body += `<p>✨ ${d.act}</p>`;
+    const nxt = DAYS[idx+1];
+    if (nxt) body += `<p style="color:#7d8f99">Tomorrow: ${nxt.from ? "on to " + nxt.to : "another day in " + nxt.to}.</p>`;
+  } else if (idx === -1) {
+    body = `<p><strong>Toowoomba to Goondiwindi</strong> · 220 km · 2h 30m</p><p>🛏️ Macintyre Motor Inn</p>`;
+  } else {
+    body = `<p>${num(TOTAL_KM)} km across four states, ${new Set(DAYS.map(x=>x.to)).size} stops.</p>`;
+  }
+  el.innerHTML = `<div class="card-label">${label}</div><h3>${heading}</h3>${body}`;
+})();
+
+/* ---- who is allowed to post; needed by the itinerary and the map ---- */
+// Each poster gets her own code, so posts are signed automatically.
+const POSTERS  = { "h7k2m9":"Heather", "m4x8p3":"Margaret" };
+const WHO      = POSTERS[new URLSearchParams(location.search).get("post")] || null;
+const CAN_POST = !!WHO;
+
+/* ---- journal data, declared before the map needs it ---- */
+const DEMO_POSTS = [
+  { id:"demo1", who:"Heather", date:"2026-08-23", place:"Toowoomba",
+    text:"Cars packed to the roof and we are finally off. Ossie reckons he has forgotten something but cannot say what. Garry and Margaret met us at the servo on the highway.",
+    photos:["assets/demo-1.jpg","assets/demo-2.jpg"] },
+  { id:"demo2", who:"Heather", date:"2026-08-23", place:"Goondiwindi",
+    text:"Made Goondiwindi by mid afternoon. Easy run down the Gore.",
+    photos:["assets/demo-3.jpg"] }
+];
+
+// Live: whatever the server has. Not live: the two samples, so the layout is visible.
+const POSTS = LIVE ? loadExtra("nullarbor_posts") : DEMO_POSTS.concat(loadExtra("nullarbor_posts"));
+
+const FACE = { Heather:"assets/face-heather.png", Ossie:"assets/face-ossie.png",
+               Garry:"assets/face-garry.png", Margaret:"assets/face-margaret.png" };
+
+const postsFor = name => POSTS.filter(p => p.place === name);
+
+/* her words go into the page as text, never as markup */
+const safe = t => String(t == null ? "" : t)
+  .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+
+/* every photo, carrying the words that were posted with it */
+const shotsOf = posts => posts.flatMap(p => p.photos.map(src => ({
+  src, where:`${p.place} · ${fmtShort(dt(p.date))}`, text:p.text || "", post:p.id })));
+
+/* ---- comments: anyone following along can leave one ---- */
+const COMMENTS = loadExtra("nullarbor_comments");
+const commentsFor = id => COMMENTS.filter(c => String(c.post) === String(id));
+
+/* the comments this phone has left, so its owner can take them back down */
+const myComments = () => loadExtra("nullarbor_mine");
+const rememberMine = id => {
+  const mine = myComments(); mine.push(id);
+  try { localStorage.setItem("nullarbor_mine", JSON.stringify(mine.slice(-200))); } catch(e){}
+};
+
+/* ---- likes: for everyone who'd rather tap than type ----
+   No logins here, so "who's already tapped this" is just a random id this
+   phone made up for itself the first time. The name shown alongside a like
+   is the same first name already used for comments — asked for once, the
+   first time someone likes something, and remembered from then on. */
+function getLiker(){
+  try {
+    let id = localStorage.getItem("nullarbor_liker");
+    if (!id){
+      id = "lk" + Math.random().toString(36).slice(2) + Date.now().toString(36);
+      localStorage.setItem("nullarbor_liker", id);
+    }
+    return id;
+  } catch(e){ return "lk" + Math.random().toString(36).slice(2); }
+}
+const LIKER = getLiker();
+const LIKES = loadExtra("nullarbor_likes");
+const likesFor = id => LIKES.filter(l => String(l.post) === String(id));
+const iLiked   = id => likesFor(id).some(l => l.who === LIKER);
+
+/* "Liked by Nat, Margaret" where names are known, folding in anyone who
+   liked before names were collected (or chose not to give one) as a count */
+function likeNamesText(id){
+  const all   = likesFor(id);
+  if (!all.length) return "";
+  const names = all.map(l => l.name).filter(Boolean);
+  const anon  = all.length - names.length;
+  if (!names.length) return `Liked by ${anon} ${anon === 1 ? "person" : "people"}`;
+  const shown = names.slice(0, 3).join(", ");
+  const restN = names.length - 3 + anon;
+  return `Liked by ${shown}${restN > 0 ? ` and ${restN} more` : ""}`;
+}
+
+/* Heather and Margaret are named by their code; everyone else types it once */
+const myName = () => WHO || (localStorage.getItem("nullarbor_name") || "").trim();
+
+const canDeleteComment = c => {
+  const fresh = !c.at || Date.now() - new Date(c.at).getTime() < EDIT_HOURS * 3600e3;
+  return fresh && (CAN_POST || myComments().includes(String(c.id)));
+};
+
+/* "just now", "3 hours ago", then the plain date once it is yesterday's news */
+function when(iso){
+  if (!iso) return "";
+  const mins = Math.round((Date.now() - new Date(iso).getTime()) / 60000);
+  if (mins < 1)  return "just now";
+  if (mins < 60) return `${mins} min${mins>1?"s":""} ago`;
+  const hrs = Math.round(mins/60);
+  if (hrs < 24)  return `${hrs} hour${hrs>1?"s":""} ago`;
+  return fmtShort(new Date(iso));
+}
+
+/* A post can be fixed or removed for two days, then it settles for good.
+   The demo posts are part of the page, not the trip, so they stay put. */
+const EDIT_HOURS = 48;
+const canEditPost = p => CAN_POST && !String(p.id).startsWith("demo") &&
+  (!p.at || Date.now() - new Date(p.at).getTime() < EDIT_HOURS * 3600e3);
+
+/* ============================================================
+   MAP
+   ============================================================ */
+const map = L.map("map", { scrollWheelZoom:false, zoomControl:true });
+L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  maxZoom:19
+}).addTo(map);
+map.once("focus", () => map.scrollWheelZoom.enable());
+
+// main route = the overnight stops in order (Cameron Corner is a spur, not a stop)
+const routeNames = [];
+DAYS.forEach(x => {
+  const name = x.side ? x.from : x.to;
+  if (routeNames[routeNames.length-1] !== name) routeNames.push(name);
+});
+if (routeNames[0] !== DAYS[0].from) routeNames.unshift(DAYS[0].from);
+
+const coordOf = n => PLACES[n];
+/* nowName is the town the map centres on — tonight's stop, all day.
+   townNow() is different, and stricter: the town they are actually in at this
+   minute, or null while they are somewhere between two of them. */
+const nowName = idx === -1 ? DAYS[0].from : idx === DAYS.length ? DAYS[DAYS.length-1].to : current.to;
+
+function townNow(){
+  if (idx === -1)          return DAYS[0].from;
+  if (idx === DAYS.length) return DAYS[DAYS.length-1].to;
+  if (!NOW)                return current.to;
+  if (NOW.state === "driving") return null;         // out on the road, in no town
+  return NOW.at || current.to;
+}
+let atTown = townNow();
+const reached = new Set(DAYS.filter(x => x.date < today).flatMap(x => [x.from, x.to].filter(Boolean)));
+if (current){
+  if (current.from) reached.add(current.from);
+  // tonight's town only counts once they're actually in it
+  if (!NOW || NOW.state === "arrived" || NOW.state === "resting" || NOW.state === "out") reached.add(current.to);
+}
+if (idx === -1) reached.add(DAYS[0].from);
+
+const nowRouteIdx = Math.max(0, routeNames.lastIndexOf(nowName));
+const ll = pts => pts.map(p => [p[1], p[0]]);          // OSRM returns lon,lat
+
+// a pale casing under everything, so the route reads as a road rather than a line
+const hasSideTrip = DAYS.some(x => x.side);
+ROADS.legs.forEach(leg =>
+  L.polyline(ll(leg.pts), {color:"#fffdf7", weight:8, opacity:.6, lineJoin:"round", lineCap:"round", interactive:false}).addTo(map));
+if (hasSideTrip)
+  L.polyline(ll(ROADS.spur.pts), {color:"#fffdf7", weight:6, opacity:.5, lineJoin:"round", lineCap:"round", interactive:false}).addTo(map);
+
+/* measure a road line so we can find any point part-way along it */
+function walkLine(pts){
+  const seg = []; let total = 0;
+  for (let i = 1; i < pts.length; i++){
+    const dy = pts[i][0] - pts[i-1][0];
+    const dx = (pts[i][1] - pts[i-1][1]) * Math.cos(pts[i][0] * Math.PI / 180);
+    const d  = Math.sqrt(dx*dx + dy*dy);
+    seg.push(d); total += d;
+  }
+  return { seg, total };
+}
+
+/* cut a road line in two at some fraction of its length: what's behind them,
+   and what's still ahead */
+function splitLine(pts, f){
+  if (f <= 0) return [[pts[0]], pts];
+  if (f >= 1) return [pts, [pts[pts.length-1]]];
+  const { seg, total } = walkLine(pts);
+  let want = total * f, acc = 0;
+  for (let i = 0; i < seg.length; i++){
+    if (acc + seg[i] >= want){
+      const t = seg[i] ? (want - acc) / seg[i] : 0;
+      const cut = [pts[i][0] + (pts[i+1][0] - pts[i][0]) * t,
+                   pts[i][1] + (pts[i+1][1] - pts[i][1]) * t];
+      return [pts.slice(0, i+1).concat([cut]), [cut].concat(pts.slice(i+1))];
+    }
+    acc += seg[i];
+  }
+  return [pts, [pts[pts.length-1]]];
+}
+
+/* Road already driven vs road still ahead — and today's leg is only ochre as
+   far as they have actually got, so the trail grows with them through the day. */
+let trailDone = null, trailLeft = null, trailPts = null;
+
+/* Where a leg sits in the route. Matching on the destination alone breaks for
+   a town visited twice: the drive home into Peterborough would take the
+   position of the first arrival, weeks earlier, and be drawn as already
+   driven. Match the from-to pair so each road is placed by the hop it is. */
+function legRouteIdx(from, to){
+  for (let i = 0; i < routeNames.length - 1; i++)
+    if (routeNames[i] === from && routeNames[i+1] === to) return i + 1;
+  return routeNames.indexOf(to);
+}
+
+ROADS.legs.forEach(leg => {
+  const iTo = legRouteIdx(leg.from, leg.to);
+  const frac = iTo < nowRouteIdx ? 1
+             : iTo > nowRouteIdx ? 0
+             : (current && current.from === leg.from && NOW) ? (NOW.f || 0) : 1;
+
+  const doneStyle = {color:"#c1663f", weight:4.5, opacity:.95, lineJoin:"round", lineCap:"round", interactive:false};
+  const leftStyle = {color:"#7d8f99", weight:3.4, opacity:.8, dashArray:"9 11", lineJoin:"round", lineCap:"round", interactive:false};
+  if (leg.guessed){ leftStyle.opacity = .5; leftStyle.dashArray = "3 8"; doneStyle.opacity = .5; }
+
+  const pts = ll(leg.pts);
+  if (frac >= 1){ L.polyline(pts, doneStyle).addTo(map); return; }
+  if (frac <= 0){ L.polyline(pts, leftStyle).addTo(map); return; }
+
+  const [behind, ahead] = splitLine(pts, frac);
+  trailDone = L.polyline(behind, doneStyle).addTo(map);
+  trailLeft = L.polyline(ahead,  leftStyle).addTo(map);
+  trailPts  = pts;
+});
+
+// the Cameron Corner day trip, as its own spur — only while a day is
+// actually still booked as one; a "Change destination" can turn it into a
+// real overnight leg instead, and then there's no day trip left to draw
+const spurDay  = DAYS.find(x => x.side);
+const spurDone = spurDay && spurDay.date <= today;
+if (spurDay)
+  L.polyline(ll(ROADS.spur.pts), {
+    color: spurDone ? "#8fa87c" : "#adbe9d", weight:3.4, opacity:.95,
+    dashArray:"4 8", lineJoin:"round", lineCap:"round", interactive:false
+  }).addTo(map);
+
+// the photo preview shown in a stop's popup — one row, whoever posted last,
+// then a link through to everything. A well-photographed stop shouldn't
+// grow the popup so tall it pushes the map off screen.
+function shotStrip(name){
+  const posts = postsFor(name).filter(p => p.photos.length || p.text);
+  if (!posts.length) return "";
+  const esc = name.replace(/'/g, "\\'");
+  const shots = shotsOf(posts);
+  const nComments = posts.reduce((n,p) => n + commentsFor(p.id).length, 0);
+  const latest = posts[posts.length - 1];       // most recently posted, for a taste of what's there
+
+  let out = `<div class="pop-post">`;
+  if (shots.length){
+    out += `<div class="pop-shots">`
+      + shots.slice(0,4).map((s,i) =>
+          `<img src="${s.src}" alt="" onclick="openPlaceGallery('${esc}',${i})">`).join("")
+      + (shots.length > 4
+          ? `<span class="pop-more" onclick="openPlaceGallery('${esc}',4)">+${shots.length-4}</span>`
+          : "")
+      + `</div>`;
+  }
+  if (latest.text) out += `<div class="pop-note">${safe(latest.text)}</div>`;
+  out += `<div class="pop-by">${safe(latest.who)} · ${fmtShort(dt(latest.date))}`
+       + (nComments ? ` · 💬 ${nComments}` : "") + `</div>`;
+  out += `<div class="pop-see" onclick="openPlaceGallery('${esc}',0)">`
+       + `See ${posts.length > 1 ? `all ${posts.length} updates` : "the photos"}`
+       + `${shots.length ? ` · ${shots.length} photo${shots.length===1?"":"s"}` : ""} →</div>`;
+  out += `</div>`;
+  return out;
+}
+
+/* the line at the top of a popup that says how today stands for this town */
+function popupBadge(name){
+  if (idx < 0 || idx >= DAYS.length) return "";
+  const line = (ico, txt) =>
+    `<div class="pop-row" style="color:#c1663f;font-weight:700;padding:0 0 6px">`
+    + `<span>${ico}</span><span>${txt}</span></div>`;
+
+  if (name === atTown) return line("📍", "All four are here now");
+  if (!NOW) return "";
+  if (NOW.state === "driving" && name === current.to)
+    return line("🚗", `On the road now — due in around ${asClock(NOW.arrive)}`);
+  if (NOW.state === "driving" && name === current.from)
+    return line("🚗", `Left here about ${asClock(NOW.depart)} today`);
+  if (NOW.state === "before" && name === current.to)
+    return line("🚗", `Tonight's stop — setting off about ${asClock(NOW.depart)}`);
+  return "";
+}
+
+/* The nights in one town, split into separate stays. Two runs of nights with
+   other towns in between are two visits, not one long one — otherwise coming
+   back to the same bed on the way home reads as a month in Peterborough. */
+const overnightTown = x => x.side ? x.from : x.to;
+function staysFor(name){
+  const out = []; let cur = null;
+  DAYS.forEach(x => {
+    if (overnightTown(x) === name){ if (!cur){ cur = []; out.push(cur); } cur.push(x); }
+    else cur = null;
+  });
+  return out;
+}
+
+function staysHTML(name, stays){
+  const nos = visitNos[name] || [];
+  let h = `<div class="pop-title">${name}</div>`;
+  h += `<div class="pop-row"><span>🔁</span><span>Stayed here ${stays.length} times`
+     + `${nos.length ? ` — stops ${nos.slice(0,-1).join(", ")} and ${nos[nos.length-1]}` : ""}</span></div>`;
+  stays.forEach(stay => {
+    const first = stay[0], last = stay[stay.length-1], nights = stay.length;
+    h += `<div class="pop-stay">`;
+    h += `<div class="pop-date">${fmtShort(first.date)}${nights > 1 ? " – " + fmtShort(last.date) : ""}</div>`;
+    if (first.from && first.km)
+      h += `<div class="pop-row"><span>🚗</span><span>${first.km} km from ${first.from}${first.time ? ", about " + first.time : ""}</span></div>`;
+    const sr = stay.find(x => x.stay);
+    if (sr) h += `<div class="pop-row"><span>🛏️</span><span>${sr.stay}</span></div>`;
+    h += `<div class="pop-row"><span>🌙</span><span>${nights} night${nights > 1 ? "s" : ""}</span></div>`;
+    stay.filter(x => x.act).forEach(x => h += `<div class="pop-row"><span>✨</span><span>${x.act}</span></div>`);
+    h += `</div>`;
+  });
+  return h + shotStrip(name);
+}
+
+// build a popup for a place
+function popupFor(name){
+  const rows = DAYS.filter(x => x.to === name);
+
+  // the town they set off from never appears as a destination
+  if (!rows.length) {
+    return popupBadge(name)
+         + `<div class="pop-date">${fmtShort(START)}</div>`
+         + `<div class="pop-title">${name}</div>`
+         + `<div class="pop-row"><span>🏁</span><span>Where it all starts — heading off for ${DAYS[0].to}</span></div>`
+         + `<div class="pop-row"><span>🏠</span><span>And where the trip finishes, once the drive home is planned</span></div>`
+         + shotStrip(name);
+  }
+
+  // came back to it later — each stay gets its own dates, drive and bed
+  const stays = staysFor(name);
+  if (stays.length > 1) return popupBadge(name) + staysHTML(name, stays);
+
+  const first = rows[0];
+  const nights = DAYS.filter(x => (x.side ? x.from : x.to) === name).length;
+  const arrive = first.date, leave = rows[rows.length-1].date;
+
+  let h = `<div class="pop-date">${fmtShort(arrive)}${rows.length>1 ? " – " + fmtShort(leave) : ""}</div>`;
+  h += `<div class="pop-title">${name}</div>`;
+
+  if (first.from && first.km) h += `<div class="pop-row"><span>🚗</span><span>${first.km} km from ${first.from}${first.time ? ", about " + first.time : ""}</span></div>`;
+  if (first.side) h += `<div class="pop-row"><span>↩️</span><span>A day trip — back to ${first.from} for the night</span></div>`;
+
+  const stayRow = DAYS.find(x => (x.side ? x.from : x.to) === name && x.stay);
+  if (stayRow) {
+    h += `<div class="pop-row"><span>🛏️</span><span>${stayRow.stay}${stayRow.room ? `<br><span style="color:#7d8f99;font-size:12.5px">${stayRow.room}</span>` : ""}</span></div>`;
+    if (!first.side) h += `<div class="pop-row"><span>🌙</span><span>${nights} night${nights>1?"s":""}</span></div>`;
+  }
+  DAYS.filter(x => (x.side ? x.to : x.to) === name && x.act)
+      .forEach(x => h += `<div class="pop-row"><span>✨</span><span>${x.act}</span></div>`);
+
+  h += shotStrip(name);
+  if (rows.every(x => x.tbc)) h += `<div class="pop-tbc">Plans for this stretch are still being sorted.</div>`;
+  return popupBadge(name) + h;
+}
+
+const markers = {};
+
+// every distinct place that appears as a destination, plus the start town
+const allPlaces = [DAYS[0].from, ...DAYS.map(x => x.to)].filter((v,i,a) => a.indexOf(v) === i);
+
+/* Numbers follow arrivals, not towns. A town they come back to later —
+   Peterborough on the way out and again on the way home — is a fresh arrival
+   and gets its own number, so its pin carries both. routeNames is already the
+   arrival order with only back-to-back repeats collapsed, so a run of nights
+   in one town still counts once while a separate return counts again. */
+const visitNos = {};
+let stopNo = 0;
+routeNames.forEach(n => { (visitNos[n] = visitNos[n] || []).push(++stopNo); });
+
+allPlaces.forEach(name => {
+  const c = coordOf(name);
+  if (!c) return;
+  const isNow  = name === atTown;
+  const isSide = DAYS.some(x => x.side && x.to === name);
+  const done   = reached.has(name);
+  const nos    = visitNos[name] || [];
+  const label  = isSide ? "★" : (nos.join("·") || "•");
+  const shots  = postsFor(name).flatMap(p => p.photos);
+  const cls    = (isSide ? "side " : "") + (nos.length > 1 ? "multi " : "") + (isNow ? "now" : done ? "done" : "todo");
+
+  // a pill of numbers needs more room than a single digit, and the icon has to
+  // be sized for it or Leaflet anchors it off-centre and the pin drifts east
+  const w = String(label).length > 2 ? 14 + String(label).length * 7 : 26;
+
+  // the town marker itself — always present, always tappable
+  const icon = L.divIcon({ className:"", iconSize:[w,26], iconAnchor:[w/2,13],
+    html:`<div class="pin ${cls}">${isNow ? '<span class="pin-pulse"></span>' : ""}`
+       + `<span class="pin-n">${label}</span>${shots.length ? '<i class="pin-cam">📷</i>' : ""}</div>` });
+  const m = L.marker(c, {icon, title:name, zIndexOffset: isNow ? 600 : 0})
+             .addTo(map).bindPopup(popupFor(name), {maxWidth:280, maxHeight:360});
+  markers[name] = m;
+
+});
+
+/* ---- the two 4WDs, put wherever they actually are at this minute ---- */
+
+// a point some fraction of the way along the real road between two towns
+function pointAlong(fromName, toName, f){
+  const leg = ROADS.legs.find(l => l.from === fromName && l.to === toName);
+  const pts = leg && leg.pts && leg.pts.length > 1 ? ll(leg.pts) : null;
+
+  if (!pts){                                   // no road drawn — straight line will do
+    const a = coordOf(fromName), b = coordOf(toName);
+    if (!a || !b) return null;
+    return [a[0] + (b[0]-a[0]) * f, a[1] + (b[1]-a[1]) * f];
+  }
+
+  const { seg, total } = walkLine(pts);
+  let want = total * f, acc = 0;
+  for (let i = 0; i < seg.length; i++){
+    if (acc + seg[i] >= want){
+      const t = seg[i] ? (want - acc) / seg[i] : 0;
+      return [pts[i][0] + (pts[i+1][0] - pts[i][0]) * t,
+              pts[i][1] + (pts[i+1][1] - pts[i][1]) * t];
+    }
+    acc += seg[i];
+  }
+  return pts[pts.length - 1];
+}
+
+function convoyWhere(){
+  if (idx === -1)          return { at:coordOf(DAYS[0].from), label:"Packing up" };
+  if (idx === DAYS.length) return { at:coordOf(DAYS[DAYS.length-1].to), label:"Home" };
+  const n = NOW || { state:"arrived" };
+  if (n.state === "driving"){
+    const p = pointAlong(current.from, current.to, n.f);
+    if (p) return { at:p, label:"On the road" };
+  }
+  return { at:coordOf(n.at || current.to), label:"" };
+}
+
+const convoyIcon = label => L.divIcon({ className:"", iconSize:[98,54], iconAnchor:[49,74], html:
+  `<div class="convoy">
+     <img class="lead" src="assets/pin-cruiser.png" alt="Garry and Margaret's LandCruiser">
+     <img class="tail" src="assets/pin-prado.png" alt="Heather and Ossie's Prado">
+     <span class="convoy-label">${label}</span>
+   </div>` });
+
+const firstWhere = convoyWhere();
+const convoyMarker = firstWhere.at
+  ? L.marker(firstWhere.at, { icon:convoyIcon(firstWhere.label), title:nowName,
+                              zIndexOffset:1000, riseOnHover:true })
+     .addTo(map).bindPopup(popupFor(nowName), {maxWidth:280, maxHeight:360})
+  : null;
+
+/* The page can sit open on a kitchen bench all day, so the cars keep
+   creeping along without anyone having to reload. */
+/* safe to reload out from under them? not if they're mid-sentence */
+function busyOnScreen(){
+  if (document.querySelector(".sheet:not([hidden])")) return true;
+  if (!document.getElementById("gallery").hidden) return true;
+  const el = document.activeElement;
+  return !!el && /INPUT|TEXTAREA|SELECT/.test(el.tagName);
+}
+
+function retick(){
+  // left open overnight? the day has changed under us — start the page again
+  if (clockIn(TRIP_TZ).day !== TRIP.day && !busyOnScreen()){ location.reload(); return; }
+
+  NOW = progressNow();
+
+  /* Setting off, or pulling in for the night, changes more than the cars —
+     which pin pulses, what the popups say, which towns count as reached.
+     Rather than patch each one, start the page over at that moment. */
+  const t = townNow();
+  if (t !== atTown){
+    atTown = t;
+    if (!busyOnScreen()){ location.reload(); return; }
+  }
+  doneKm = countDone();
+  drawStatus();
+
+  if (trailPts && trailDone && trailLeft){
+    const [behind, ahead] = splitLine(trailPts, NOW && NOW.state === "driving" ? NOW.f
+                                              : NOW && NOW.f >= 1 ? 1 : 0);
+    trailDone.setLatLngs(behind);
+    trailLeft.setLatLngs(ahead);
+  }
+
+  const w = convoyWhere();
+  if (convoyMarker && w.at){
+    convoyMarker.setLatLng(w.at);
+    convoyMarker.setIcon(convoyIcon(w.label));
+  }
+}
+setInterval(retick, 5 * 60000);
+
+/* --- two ways to look at the map --- */
+const btnNow = document.getElementById("viewNow");
+const btnAll = document.getElementById("viewAll");
+
+const boundsAll = L.latLngBounds(
+  ROADS.legs.flatMap(leg => ll(leg.pts)).concat(ll(ROADS.spur.pts), allPlaces.map(coordOf)));
+const closeZoom = () => window.innerWidth < 720 ? 6 : 7;
+
+function setView(which, animate){
+  const now = which === "now";
+  btnNow.classList.toggle("on", now);
+  btnAll.classList.toggle("on", !now);
+  if (now) map.setView(convoyWhere().at || coordOf(nowName), closeZoom(), {animate:!!animate});
+  else     map.fitBounds(boundsAll, {padding:[40,40], animate:!!animate});
+}
+btnNow.addEventListener("click", () => setView("now", true));
+btnAll.addEventListener("click", () => setView("all", true));
+
+const small = window.matchMedia("(max-width:720px)").matches;
+setView(small ? "now" : "all");
+
+// on a phone the popup would swallow the whole map, so leave it closed there
+if (!small) setTimeout(() => { if (markers[nowName]) markers[nowName].openPopup(); }, 700);
+
+/* jump to a stop from anywhere on the page */
+function goToStop(name){
+  document.getElementById("tab-map").click();
+  const m = markers[name];
+  if (!m) return;
+  setTimeout(() => {
+    map.invalidateSize();
+    map.setView(m.getLatLng(), Math.max(map.getZoom(), 6), {animate:true});
+    m.openPopup();
+    document.querySelector(".map-shell").scrollIntoView({behavior:"smooth", block:"center"});
+  }, 90);
+}
+
+/* ============================================================
+   ITINERARY TABLE
+   ============================================================ */
+(function itinerary(){
+  const tb = document.getElementById("itinBody");
+  // Newest day first. Past 20-odd stops, the days that matter — today, and
+  // whatever was just added — are the ones at the end of the trip, and
+  // scrolling the whole way down to reach them every time got tedious.
+  // DAYS itself stays in trip order; only the table is flipped, because
+  // plenty of other things (the next stop's date, the road between towns)
+  // depend on it running forwards.
+  tb.innerHTML = DAYS.slice().reverse().map(x => {
+    const isToday = x.date.getTime() === today.getTime();
+    const cls = isToday ? "today" : (x.date < today ? "past" : "");
+    const from = x.from || `<span class="stay-note">staying put</span>`;
+    const to   = x.side ? `<span class="dest">${x.to}</span> <span class="stay-note">(day trip)</span>` : `<span class="dest">${x.to}</span>`;
+    const km   = x.km ? num(x.km) : (x.tbc && !x.from ? "—" : x.km === null ? `<span class="tbc">TBC</span>` : "—");
+    const time = x.time || (x.tbc && x.from && !x.time ? `<span class="tbc">TBC</span>` : "—");
+    // the something-special note stands on its own — it shouldn't disappear
+    // just because the bed for that night isn't sorted yet
+    const stay = (x.stay
+        ? `${x.stay}${x.room ? `<span class="room">${x.room}</span>` : ""}`
+        : `<span class="tbc">To be confirmed</span>`)
+      + (x.act ? `<span class="room">✨ ${x.act}</span>` : "");
+    return `<tr class="${cls}" data-place="${x.to}" data-day="${x.d}" tabindex="0" role="button" aria-label="Show ${x.to} on the map">
+      <td>${fmtShort(x.date)}${isToday ? ' <span class="day-of" style="font-size:10px;padding:2px 7px">Today</span>' : ""}</td>
+      <td data-l="From">${from}</td>
+      <td data-l="To">${to}</td>
+      <td data-l="Kms" class="${km === "—" ? "empty" : ""}">${km}</td>
+      <td data-l="Drive" class="${time === "—" ? "empty" : ""}">${time}</td>
+      <td data-l="Staying">${stay}${x.added ? `<span class="room"><span class="row-added">Added on the road</span></span>` : ""}${
+        CAN_POST ? `<span class="room row-acts">
+          <button class="row-edit" onclick="event.stopPropagation();editDay('${x.d}')">Edit this day</button>
+          <button class="row-edit" onclick="event.stopPropagation();openTownChange('${x.d}')">Change destination</button>${
+          x.added ? `<button class="row-del" onclick="event.stopPropagation();askRemoveStop('${x.d}','${x.to.replace(/'/g,"\\'")}')">Remove this stop</button>` : ""}
+        </span>` : ""}</td>
+    </tr>`;
+  }).join("");
+
+  tb.querySelectorAll("tr").forEach(tr => {
+    const go = () => goToStop(tr.dataset.place);
+    tr.addEventListener("click", go);
+    tr.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); }});
+  });
+})();
+
+
+/* ============================================================
+   JOURNAL  — photos and notes from the road
+   Demo data for now; swap POSTS for a Supabase read once the
+   project keys are in, and the rest of this file is unchanged.
+   ============================================================ */
+
+
+function renderJournal(){
+  const el = document.getElementById("journalList");
+  if (!POSTS.length){
+    el.innerHTML = `<div class="journal-empty">No photos yet.<br>Heather will add them as they go.</div>`;
+    return;
+  }
+  const sorted = [...POSTS].sort((a,b) => b.date.localeCompare(a.date) || b.id.localeCompare(a.id));
+  el.innerHTML = sorted.map(p => `
+    <article class="post" id="post-${p.id}">
+      <div class="post-head">
+        <img src="${FACE[p.who] || FACE.Heather}" alt="">
+        <div>
+          <div class="post-who">${p.who}</div>
+          <div class="post-when">${p.place} &middot; ${fmtShort(dt(p.date))}</div>
+        </div>
+      </div>
+      ${p.photos.length ? `<div class="post-photos n${Math.min(p.photos.length,4)}">
+        ${p.photos.map((src,i) => `<img src="${src}" alt="" loading="lazy" onclick="openPostGallery('${p.id}',${i})">`).join("")}
+      </div>` : ""}
+      ${p.text ? `<div class="post-text">${safe(p.text)}</div>` : ""}
+      <div class="post-actions" id="likewrap-${p.id}">${likeBlockHTML(p)}</div>
+      ${canEditPost(p) ? `<div class="post-tools">
+        <button onclick="editPost('${p.id}')">Edit</button>
+        <button class="danger" onclick="askDeletePost('${p.id}')">Delete</button>
+      </div>` : ""}
+      <div class="cmts" id="cmts-${p.id}">${commentsBlock(p)}</div>
+    </article>`).join("");
+}
+
+/* a tap, not a typed word — for anyone happier just saying "saw this" */
+function likeButtonHTML(p){
+  const liked = iLiked(p.id);
+  const n = likesFor(p.id).length;
+  return `<button class="like-btn${liked ? " liked" : ""}" id="like-${p.id}"
+            onclick="event.stopPropagation();toggleLike('${p.id}')">
+            <span class="like-heart">${liked ? "❤️" : "🤍"}</span>
+            <span class="like-count">${n || ""}</span>
+          </button>`;
+}
+
+function likeBlockHTML(p){
+  const names = likeNamesText(p.id);
+  return `${likeButtonHTML(p)}${names ? `<span class="like-names">${safe(names)}</span>` : ""}`;
+}
+
+window.toggleLike = async function(id){
+  const already = iLiked(id);
+
+  // liking (not un-liking) puts a name on it — ask once, the same way a
+  // first comment does, then carry on with the tap that triggered this
+  if (!already && !myName()){
+    promptName(() => toggleLike(id));
+    return;
+  }
+
+  const btn = document.getElementById("like-" + id);
+  if (btn) btn.disabled = true;
+
+  if (already){
+    for (let i = LIKES.length - 1; i >= 0; i--){
+      if (String(LIKES[i].post) === String(id) && LIKES[i].who === LIKER) LIKES.splice(i, 1);
+    }
+    if (LIVE){
+      try {
+        await sbDelete("roadtrip_likes",
+          `post_id=eq.${encodeURIComponent(id)}&liker=eq.${encodeURIComponent(LIKER)}`);
+      } catch(e){ /* a missed unlike settles itself on the next proper sync */ }
+    }
+  } else {
+    const name = myName();
+    LIKES.push({ post:id, who:LIKER, name, at:new Date().toISOString() });
+    if (LIVE){
+      try { await sbUpsert("roadtrip_likes", { post_id:id, liker:LIKER, liker_name:name }); }
+      catch(e){ /* likewise — not worth an error over a heart */ }
+    }
+  }
+
+  try { localStorage.setItem("nullarbor_likes", JSON.stringify(LIKES)); } catch(e){}
+  localStorage.removeItem("nullarbor_cache");   // so the next load agrees
+  const wrap = document.getElementById("likewrap-" + id);
+  if (wrap) wrap.innerHTML = likeBlockHTML(POSTS.find(x => String(x.id) === String(id)));
+};
+
+/* the comments under one post, and the little box for leaving another */
+/* whose name goes on the next comment — never a mystery, and never blank */
+function bylineHTML(){
+  if (WHO) return `Signed <b>${safe(WHO)}</b>`;
+  const name = myName();
+  return name
+    ? `Commenting as <b>${safe(name)}</b> <button class="cmt-chg" onclick="changeName()">change</button>`
+    : `<button class="cmt-chg strong" onclick="changeName()">Add your name</button>`;
+}
+const refreshBylines = () =>
+  document.querySelectorAll(".cmt-as").forEach(el => { el.innerHTML = bylineHTML(); });
+
+function commentsBlock(p){
+  const list = commentsFor(p.id);
+  return list.map(c => `
+    <div class="cmt">
+      <div class="cmt-top">
+        <b>${safe(c.who)}</b><span class="cmt-when">${when(c.at)}</span>
+        ${canDeleteComment(c) ? `<button class="cmt-del" onclick="askDeleteComment('${c.id}')">Remove</button>` : ""}
+      </div>
+      <div class="cmt-body">${safe(c.text)}</div>
+    </div>`).join("")
+    + `<div class="cmt-form">
+         <div class="cmt-row">
+           <input class="cmt-in" id="ci-${p.id}" placeholder="${list.length ? "Join in…" : "Say something…"}" maxlength="600"
+                  onfocus="ensureName('${p.id}')"
+                  onkeydown="if(event.key==='Enter'){event.preventDefault();sendComment('${p.id}')}">
+           <button class="cmt-go" onclick="sendComment('${p.id}')">Post</button>
+         </div>
+         <div class="cmt-as">${bylineHTML()}</div>
+         <p class="cmt-note" id="cnote-${p.id}"></p>
+       </div>`;
+}
+
+function redrawComments(id){
+  const box = document.getElementById("cmts-" + id);
+  const p = POSTS.find(x => String(x.id) === String(id));
+  if (box && p) box.innerHTML = commentsBlock(p);
+}
+
+const cmtNote = (id, msg) => {
+  const n = document.getElementById("cnote-" + id);
+  if (n) n.textContent = msg || "";
+};
+
+/* ---- the name, asked for properly rather than left to good manners ---- */
+const nameSheet = document.getElementById("nameSheet");
+let nameThen = null;
+
+function promptName(then){
+  nameThen = then || null;
+  const box = document.getElementById("nameIn");
+  box.value = WHO || localStorage.getItem("nullarbor_name") || "";
+  document.getElementById("nameNote").textContent = "";
+  nameSheet.hidden = false;
+  setTimeout(() => box.focus(), 90);
+}
+function closeName(){ nameSheet.hidden = true; nameThen = null; }
+function saveName(){
+  const v = document.getElementById("nameIn").value.trim().replace(/\s+/g, " ").slice(0,40);
+  if (v.length < 2){
+    document.getElementById("nameNote").textContent = "A first name is plenty — it just can't be blank.";
+    document.getElementById("nameIn").focus();
+    return;
+  }
+  try { localStorage.setItem("nullarbor_name", v); } catch(e){}
+  const then = nameThen;
+  closeName();
+  refreshBylines();
+  if (then) then();
+}
+
+document.getElementById("nameX").addEventListener("click", closeName);
+document.getElementById("nameSave").addEventListener("click", saveName);
+nameSheet.addEventListener("click", e => { if (e.target === nameSheet) closeName(); });
+document.getElementById("nameIn").addEventListener("keydown", e => {
+  if (e.key === "Enter"){ e.preventDefault(); saveName(); }
+});
+
+window.changeName = () => { if (!WHO) promptName(null); };
+
+/* Asked the moment she taps the box, so it is never an afterthought — but
+   only once. If she waves it away she can still type; the name is asked for
+   again when she posts, and that time there is no way past it. */
+let nameAsked = false;
+window.ensureName = id => {
+  if (myName() || nameAsked) return;
+  nameAsked = true;
+  promptName(() => {
+    const box = document.getElementById("ci-" + id);
+    if (box) box.focus();
+  });
+};
+
+window.sendComment = async function(id, keep){
+  const input = document.getElementById("ci-" + id);
+  const text  = (keep !== undefined ? keep : (input ? input.value : "")).trim();
+  if (!text) return;
+
+  const name = myName();
+  if (!name){
+    // hold on to her words, ask who she is, then send it for her
+    promptName(() => sendComment(id, text));
+    return;
+  }
+
+  const btn = document.querySelector(`#cmts-${CSS.escape(id)} .cmt-go`);
+  if (btn){ btn.disabled = true; btn.textContent = "Sending…"; }
+
+  let row = { id:"local"+Date.now(), post:id, who:name, text, at:new Date().toISOString() };
+  if (LIVE){
+    try {
+      const saved = await sbInsert("roadtrip_comments", { post_id:id, author:name, body:text });
+      row = { id:saved.id, post:id, who:saved.author, text:saved.body, at:saved.created_at };
+    } catch(e){
+      if (btn){ btn.disabled = false; btn.textContent = "Post"; }
+      cmtNote(id, "Couldn't send it — no signal? Your words are still here, try again in a bit.");
+      return;
+    }
+  }
+
+  COMMENTS.push(row);
+  rememberMine(String(row.id));
+  try { localStorage.setItem("nullarbor_comments", JSON.stringify(COMMENTS)); } catch(e){}
+  localStorage.removeItem("nullarbor_cache");   // so the next load agrees
+  redrawComments(id);
+};
+
+window.askDeleteComment = function(cid){
+  const c = COMMENTS.find(x => String(x.id) === String(cid));
+  if (!c) return;
+  ask("Remove this comment?", `${c.who}: “${c.text}”`, "Yes, remove it", () => removeComment(cid));
+};
+
+async function removeComment(cid){
+  const c = COMMENTS.find(x => String(x.id) === String(cid));
+  if (!c) return;
+  if (LIVE){
+    try {
+      await sbDelete("roadtrip_comments", `id=eq.${encodeURIComponent(c.id)}`);
+    } catch(e){
+      ask("Couldn't remove it",
+          "No signal, or the comment is more than two days old — it is still there.", "OK", null);
+      return;
+    }
+  }
+  COMMENTS.splice(COMMENTS.indexOf(c), 1);
+  try { localStorage.setItem("nullarbor_comments", JSON.stringify(COMMENTS)); } catch(e){}
+  localStorage.removeItem("nullarbor_cache");
+  redrawComments(c.post);
+}
+
+renderJournal();
+
+/* newest post, surfaced near the top so nobody has to go looking */
+(function latest(){
+  if (!POSTS.length) return;
+  const p = [...POSTS].sort((a,b) => b.date.localeCompare(a.date) || b.id.localeCompare(a.id))[0];
+  const strip = document.getElementById("latestStrip");
+  document.getElementById("latestThumb").src = p.photos[0] || FACE[p.who];
+  document.getElementById("latestText").textContent =
+    p.text ? `${p.place} — ${p.text}` : `${p.photos.length} new photo${p.photos.length>1?"s":""} from ${p.place}`;
+  strip.hidden = false;
+  // the tab badge is the unread count now — drawBell() sets it
+  strip.addEventListener("click", e => { e.preventDefault(); document.getElementById("tab-journal").click(); });
+})();
+
+/* ============================================================
+   GALLERY  — tap any photo anywhere to see them full size
+   ============================================================ */
+let galList = [], galI = 0, galWhere = "";
+const galEl = document.getElementById("gallery");
+
+function galShow(){
+  const item = galList[galI];
+  document.getElementById("galImg").src = item.src;
+  document.getElementById("galWhere").textContent = item.where || galWhere;
+  document.getElementById("galCount").textContent =
+    galList.length > 1 ? `${galI+1} of ${galList.length}` : "";
+  const note = document.getElementById("galNote");
+  const noteText = document.getElementById("galNoteText");
+  const noteMore = document.getElementById("galNoteMore");
+  noteText.textContent = item.text || "";
+  note.hidden = !item.text;
+  note.classList.remove("expanded");
+  noteMore.hidden = true;
+  noteMore.textContent = "Read more";
+  if (item.text){
+    // only offer "Read more" once the caption is long enough to actually
+    // be clipped — short ones need nothing extra
+    requestAnimationFrame(() => {
+      if (noteText.scrollHeight > noteText.clientHeight + 2) noteMore.hidden = false;
+    });
+  }
+
+  // what people have said about this photo's post
+  const cmt = document.getElementById("galCmt");
+  const list = item.post ? commentsFor(item.post) : [];
+  if (list.length){
+    const last = list[list.length - 1];
+    const more = list.length - 1;
+    cmt.innerHTML = `<span class="gal-cmt-who">💬 ${safe(last.who)}</span> `
+      + `<span class="gal-cmt-text">${safe(last.text)}</span>`
+      + (more ? `<span class="gal-cmt-more">and ${more} more</span>` : "");
+    cmt.hidden = false;
+  } else {
+    cmt.innerHTML = `<span class="gal-cmt-more">💬 Add a comment</span>`;
+    cmt.hidden = !item.post;
+  }
+  cmt.onclick = e => { e.stopPropagation(); if (item.post) goToPost(item.post); };
+  const many = galList.length > 1;
+  document.getElementById("galPrev").hidden = !many;
+  document.getElementById("galNext").hidden = !many;
+}
+function galOpen(list, i, where){
+  if (!list.length) return;
+  // a plain list of photo addresses still works, it just has nothing to say
+  galList = list.map(x => typeof x === "string" ? { src:x, where:"", text:"" } : x);
+  galI = i || 0; galWhere = where || "";
+  galEl.hidden = false; galShow();
+}
+function galStep(d){ galI = (galI + d + galList.length) % galList.length; galShow(); }
+function galClose(){ galEl.hidden = true; }
+
+document.getElementById("galClose").addEventListener("click", galClose);
+document.getElementById("galPrev").addEventListener("click", e => { e.stopPropagation(); galStep(-1); });
+document.getElementById("galNext").addEventListener("click", e => { e.stopPropagation(); galStep(1); });
+document.getElementById("galNoteMore").addEventListener("click", e => {
+  e.stopPropagation();
+  const note = document.getElementById("galNote");
+  const expand = !note.classList.contains("expanded");
+  note.classList.toggle("expanded", expand);
+  e.currentTarget.textContent = expand ? "Show less" : "Read more";
+});
+galEl.addEventListener("click", e => { if (e.target === galEl || e.target.id === "galImg") galClose(); });
+document.addEventListener("keydown", e => {
+  if (galEl.hidden) return;
+  if (e.key === "Escape") galClose();
+  if (e.key === "ArrowLeft")  galStep(-1);
+  if (e.key === "ArrowRight") galStep(1);
+});
+// swipe, for phones
+let tx = null;
+galEl.addEventListener("touchstart", e => { tx = e.touches[0].clientX; }, {passive:true});
+galEl.addEventListener("touchend", e => {
+  if (tx === null) return;
+  const dx = e.changedTouches[0].clientX - tx;
+  if (Math.abs(dx) > 45) galStep(dx < 0 ? 1 : -1);
+  tx = null;
+}, {passive:true});
+
+// every photo for one town, in trip order
+/* from a full-screen photo to that post in the journal, comments and all */
+function goToPost(id){
+  galClose();
+  document.getElementById("tab-journal").click();
+  const el = document.getElementById("post-" + id);
+  if (el) requestAnimationFrame(() => el.scrollIntoView({ block:"center", behavior:"smooth" }));
+  const box = document.getElementById("ci-" + id);
+  if (box) setTimeout(() => box.focus({ preventScroll:true }), 500);
+}
+
+window.openPlaceGallery = (place, i) => galOpen(shotsOf(postsFor(place)), i, place);
+window.openPostGallery = (id, i) => {
+  const p = POSTS.find(x => String(x.id) === String(id));
+  if (p) galOpen(shotsOf([p]), i, `${p.place} · ${fmtShort(dt(p.date))}`);
+};
+
+/* ============================================================
+   ADDING A POST  (only Heather's bookmark carries the code)
+   ============================================================ */
+const addBtn    = document.getElementById("addBtn");
+const sheet     = document.getElementById("sheet");
+const postBtn   = document.getElementById("postBtn");
+const delBtn    = document.getElementById("delBtn");
+const sheetNote = document.getElementById("sheetNote");
+
+let picked   = [];    // new photos chosen off the phone
+let keepUrls = [];    // photos already on this post that she is keeping
+let dropUrls = [];    // photos she has taken back out of it
+let editing  = null;  // the post being edited, or null when adding a new one
+
+const say = (msg, busy) => {
+  sheetNote.textContent = msg || "";
+  sheetNote.className = "sheet-note" + (busy ? " busy" : "");
+};
+
+/* Nothing is ever deleted on a single tap — it asks first, in plain words.
+   Called with go = null it is simply a message with one way out. */
+const askSheet = document.getElementById("askSheet");
+let askGo = null;
+
+function ask(title, text, yesLabel, go){
+  document.getElementById("askTitle").textContent = title;
+  document.getElementById("askText").textContent  = text;
+  document.getElementById("askYes").textContent   = yesLabel;
+  document.getElementById("askYes").className     = go ? "del-btn" : "keep-btn";
+  document.getElementById("askNo").hidden = !go;
+  askGo = go || null;
+  askSheet.hidden = false;
+}
+function askClose(){ askSheet.hidden = true; askGo = null; }
+
+document.getElementById("askNo").addEventListener("click", askClose);
+document.getElementById("askX").addEventListener("click", askClose);
+askSheet.addEventListener("click", e => { if (e.target === askSheet) askClose(); });
+document.getElementById("askYes").addEventListener("click", () => {
+  const go = askGo; askClose(); if (go) go();
+});
+
+function drawThumbs(){
+  const box = document.getElementById("thumbs");
+  box.innerHTML = "";
+
+  keepUrls.forEach((url, i) => {
+    const fig = document.createElement("figure"); fig.className = "old";
+    const img = document.createElement("img"); img.src = url;
+    const rm = document.createElement("button");
+    rm.textContent = "×"; rm.setAttribute("aria-label","Take this photo out of the post");
+    rm.onclick = () => { dropUrls.push(keepUrls.splice(i,1)[0]); drawThumbs(); };
+    fig.append(img, rm); box.append(fig);
+  });
+
+  picked.forEach((f, i) => {
+    const fig = document.createElement("figure");
+    const img = document.createElement("img");
+    img.src = URL.createObjectURL(f);
+    const rm = document.createElement("button");
+    rm.textContent = "×"; rm.setAttribute("aria-label","Remove photo");
+    rm.onclick = () => { picked.splice(i,1); drawThumbs(); };
+    fig.append(img, rm); box.append(fig);
+  });
+
+  const total = keepUrls.length + picked.length;
+  postBtn.disabled = editing ? total === 0 : picked.length === 0;
+  if (editing) say(total ? `${total} photo${total>1?"s":""} on this post`
+                         : "Add a photo, or delete the post instead");
+  else say(picked.length ? `${picked.length} photo${picked.length>1?"s":""} ready` : "");
+}
+
+function openNew(){
+  editing = null; picked = []; keepUrls = []; dropUrls = [];
+  document.getElementById("sheetTitle").textContent = `Add to the journal — ${WHO}`;
+  document.getElementById("postText").value = "";
+  document.getElementById("postDayFld").hidden = false;
+  document.getElementById("pickTitle").textContent = "Choose photos";
+  document.getElementById("pickSub").textContent = "Pick as many as you like";
+  postBtn.textContent = "Post";
+  delBtn.hidden = true; delBtn.textContent = "Delete this post";
+  drawThumbs();
+  sheet.hidden = false;
+}
+
+/* Open an existing post to fix the words or the photos. The day and the
+   town stay as posted — those are settled by the time she is editing. */
+window.editPost = function(id){
+  const p = POSTS.find(x => String(x.id) === String(id));
+  if (!p) return;
+  editing = p; picked = []; keepUrls = [...p.photos]; dropUrls = [];
+  document.getElementById("sheetTitle").textContent = `Edit — ${p.place}, ${fmtShort(dt(p.date))}`;
+  document.getElementById("postText").value = p.text || "";
+  document.getElementById("postDayFld").hidden = true;
+  document.getElementById("pickTitle").textContent = "Add more photos";
+  document.getElementById("pickSub").textContent = "They join the ones already here";
+  postBtn.textContent = "Save changes";
+  delBtn.hidden = false; delBtn.textContent = "Delete this post";
+  drawThumbs();
+  sheet.hidden = false;
+};
+
+const NO_DELETE = "Couldn't remove it — no signal, or the post is more than two days old.";
+
+window.askDeletePost = function(id){
+  const p = POSTS.find(x => String(x.id) === String(id));
+  if (!p) return;
+  const n = p.photos.length;
+  ask("Delete this post?",
+      `${n ? n + (n>1 ? " photos" : " photo") + " from " : ""}${p.place}, ${fmtShort(dt(p.date))}`
+      + `. It disappears for everyone, and it can't be brought back.`,
+      "Yes, delete it", () => removePost(id));
+};
+
+async function removePost(id){
+  const p = POSTS.find(x => String(x.id) === String(id));
+  if (!p) return;
+
+  if (LIVE){
+    try {
+      say("Removing…", true);
+      await sbDelete("roadtrip_posts", `id=eq.${encodeURIComponent(p.id)}`);
+      for (const url of p.photos) await sbDropPhoto(url);
+      localStorage.removeItem("nullarbor_cache");
+      sessionStorage.removeItem("nullarbor_seen");
+      location.reload();
+      return;
+    } catch(e){
+      say(NO_DELETE);
+      if (sheet.hidden) ask("Couldn't remove it", NO_DELETE, "OK", null);
+      return;
+    }
+  }
+
+  POSTS.splice(POSTS.indexOf(p), 1);
+  renderJournal();
+  sheet.hidden = true;
+}
+
+async function saveEdit(){
+  const p = editing;
+  postBtn.disabled = true; postBtn.textContent = "Saving…";
+  const text = document.getElementById("postText").value.trim();
+  const shrunk = await Promise.all(picked.map(f => shrink(f)));
+
+  if (LIVE){
+    try {
+      const urls = [...keepUrls];
+      for (let i = 0; i < shrunk.length; i++){
+        postBtn.textContent = `Sending photo ${i+1} of ${shrunk.length}…`;
+        urls.push(await sbUpload(shrunk[i].blob, `${WHO}-${i}.jpg`));
+      }
+      postBtn.textContent = "Saving…";
+      await sbPatch("roadtrip_posts", `id=eq.${encodeURIComponent(p.id)}`,
+                    { note:text || null, photos:urls });
+      for (const url of dropUrls) await sbDropPhoto(url);
+      localStorage.removeItem("nullarbor_cache");
+      sessionStorage.removeItem("nullarbor_seen");
+      location.reload();
+      return;
+    } catch(e){
+      postBtn.disabled = false; postBtn.textContent = "Save changes";
+      say("Couldn't save it — no signal, or the post is more than two days old.");
+      return;
+    }
+  }
+
+  p.text = text;
+  p.photos = [...keepUrls, ...shrunk.map(x => x.url)];
+  renderJournal();
+  postBtn.disabled = false;
+  sheet.hidden = true;
+}
+
+async function addPost(){
+  postBtn.disabled = true; postBtn.textContent = "Posting…";
+  const day  = DAYS[+document.getElementById("postDay").value];
+  const text = document.getElementById("postText").value.trim();
+  // photos are shrunk on the phone before they go anywhere
+  const shrunk = await Promise.all(picked.map(f => shrink(f)));
+
+  if (LIVE){
+    try {
+      const urls = [];
+      for (let i = 0; i < shrunk.length; i++){
+        postBtn.textContent = `Sending photo ${i+1} of ${shrunk.length}…`;
+        urls.push(await sbUpload(shrunk[i].blob, `${WHO}-${i}.jpg`));
+      }
+      postBtn.textContent = "Saving…";
+      await sbInsert("roadtrip_posts",
+        { author:WHO, day:day.d, place:day.to, note:text || null, photos:urls });
+      localStorage.removeItem("nullarbor_cache");
+      sessionStorage.removeItem("nullarbor_seen");
+      location.reload();
+      return;
+    } catch(err){
+      // keep her photos selected so she can try again when there is signal
+      postBtn.disabled = false; postBtn.textContent = "Post";
+      say("Couldn't send — no signal? Your photos are still here, try again in a bit.");
+      return;
+    }
+  }
+
+  POSTS.push({ id:"local"+Date.now(), who:WHO, date:day.d, place:day.to,
+               text, photos:shrunk.map(x => x.url), at:new Date().toISOString() });
+  renderJournal();
+  picked = []; drawThumbs();
+  document.getElementById("postText").value = "";
+  postBtn.disabled = false; postBtn.textContent = "Post";
+  sheet.hidden = true;
+  document.getElementById("tab-journal").click();
+}
+
+if (CAN_POST){
+  addBtn.hidden = false;
+  document.body.classList.add("can-post");
+
+  // which day are these from? default to today, but she may be catching up
+  const sel = document.getElementById("postDay");
+  sel.innerHTML = DAYS.map((x,i) =>
+    `<option value="${i}" ${i === Math.max(0, Math.min(idx, DAYS.length-1)) ? "selected" : ""}>${fmtShort(x.date)} — ${x.to}</option>`
+  ).join("");
+
+  addBtn.addEventListener("click", openNew);
+  document.getElementById("sheetClose").addEventListener("click", () => { sheet.hidden = true; });
+  sheet.addEventListener("click", e => { if (e.target === sheet) sheet.hidden = true; });
+
+  document.getElementById("fileInput").addEventListener("change", e => {
+    for (const f of e.target.files) picked.push(f);
+    e.target.value = "";
+    drawThumbs();
+  });
+
+  delBtn.addEventListener("click", () => { if (editing) askDeletePost(editing.id); });
+
+  postBtn.addEventListener("click", () => { editing ? saveEdit() : addPost(); });
+
+  openNew();          // sheet starts out ready for a new post
+  sheet.hidden = true;
+}
+
+/* shrink a camera photo to something a weak signal can actually send */
+function shrink(file, max = 1600, quality = 0.72){
+  return new Promise(res => {
+    const img = new Image();
+    img.onload = () => {
+      const scale = Math.min(1, max / Math.max(img.width, img.height));
+      const c = document.createElement("canvas");
+      c.width = Math.round(img.width * scale); c.height = Math.round(img.height * scale);
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      c.toBlob(blob => res({ blob: blob || file,
+                             url: LIVE ? null : c.toDataURL("image/jpeg", quality) }),
+               "image/jpeg", quality);
+    };
+    img.onerror = () => res({ blob:file, url:URL.createObjectURL(file) });
+    img.src = URL.createObjectURL(file);
+  });
+}
+
+
+/* ============================================================
+   ADDING A STOP  — for the drive home, worked out as they go
+   ============================================================ */
+// PLACES holds [lat, lon] because that is what Leaflet wants.
+// Every routing service wants [lon, lat]. Convert, never assume.
+const toLonLat = p => [p[1], p[0]];
+
+const GEOCODE = "https://nominatim.openstreetmap.org/search";
+const ROUTER  = "https://router.project-osrm.org/route/v1/driving";
+
+async function searchTowns(q){
+  const url = `${GEOCODE}?format=jsonv2&limit=6&countrycodes=au&addressdetails=1&q=${encodeURIComponent(q)}`;
+  const r = await fetch(url, {headers:{"Accept":"application/json"}});
+  if (!r.ok) throw new Error("geocode " + r.status);
+  return (await r.json()).map(x => {
+    const a = x.address || {};
+    const town = x.name || x.display_name.split(",")[0];
+    const region = [a.state_district || a.county, a.state].filter(Boolean).join(", ");
+    return { lon:+x.lon, lat:+x.lat, name:town, region: region || a.country || "Australia" };
+  });
+}
+async function findTown(name){
+  const list = await searchTowns(name);
+  return list.length ? list[0] : null;
+}
+
+/* Two routing services, then a fallback estimate — so the boxes are never
+   left empty just because a server is having a bad day. */
+async function viaOSRM(a, b){
+  const r = await fetch(`${ROUTER}/${a[0]},${a[1]};${b[0]},${b[1]}?overview=simplified&geometries=geojson`);
+  if (!r.ok) throw new Error("osrm " + r.status);
+  const j = await r.json();
+  if (j.code !== "Ok" || !j.routes.length) throw new Error("osrm no route");
+  return { pts:j.routes[0].geometry.coordinates,
+           km:Math.round(j.routes[0].distance/1000),
+           mins:Math.round(j.routes[0].duration/60), source:"road" };
+}
+
+function decode6(str){                       // Valhalla returns polyline at 1e6
+  const out = []; let i = 0, lat = 0, lon = 0;
+  while (i < str.length){
+    for (const which of [0,1]){
+      let shift = 0, result = 0, byte;
+      do { byte = str.charCodeAt(i++) - 63; result |= (byte & 0x1f) << shift; shift += 5; } while (byte >= 0x20);
+      const d = (result & 1) ? ~(result >> 1) : (result >> 1);
+      if (which === 0) lat += d; else lon += d;
+    }
+    out.push([lon / 1e6, lat / 1e6]);
+  }
+  return out;
+}
+
+async function viaValhalla(a, b){
+  const q = encodeURIComponent(JSON.stringify({
+    locations:[{lat:a[1], lon:a[0]}, {lat:b[1], lon:b[0]}],
+    costing:"auto", directions_options:{units:"kilometers"}
+  }));
+  const r = await fetch(`https://valhalla1.openstreetmap.de/route?json=${q}`);
+  if (!r.ok) throw new Error("valhalla " + r.status);
+  const j = await r.json();
+  if (!j.trip || !j.trip.legs || !j.trip.legs.length) throw new Error("valhalla no route");
+  return { pts:decode6(j.trip.legs[0].shape),
+           km:Math.round(j.trip.summary.length),
+           mins:Math.round(j.trip.summary.time/60), source:"road" };
+}
+
+function estimateRoad(a, b){
+  const R = 6371, rad = x => x * Math.PI / 180;
+  const dLat = rad(b[1]-a[1]), dLon = rad(b[0]-a[0]);
+  const h = Math.sin(dLat/2)**2 + Math.cos(rad(a[1]))*Math.cos(rad(b[1]))*Math.sin(dLon/2)**2;
+  const km = Math.round(2 * R * Math.asin(Math.sqrt(h)) * 1.18);   // roads wander
+  return { pts:[a, b], km, mins:Math.round(km / 85 * 60), source:"estimate" };
+}
+
+async function roadBetween(a, b){
+  for (const fn of [viaOSRM, viaValhalla]){
+    try { return await fn(a, b); } catch(e){ /* try the next one */ }
+  }
+  return estimateRoad(a, b);
+}
+
+const asDrive = m => m < 60 ? `${m}m` : (m % 60 ? `${Math.floor(m/60)}h ${m%60}m` : `${Math.floor(m/60)}h`);
+// toISOString() shifts to UTC, which lands a day early in Brisbane
+const isoLocal = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+
+if (CAN_POST){
+  const stopSheet = document.getElementById("stopSheet");
+  const note = document.getElementById("stopNote");
+  const $ = id => document.getElementById(id);
+  // {lon,lat,name,region[,road]} once each end resolves to a real place —
+  // both ends are searched and picked the same way, so neither can quietly
+  // point at a town the map doesn't actually know
+  let foundFrom = null, foundTo = null;
+
+  // up near the top, by the note — with a long trip's worth of stops now
+  // logged, scrolling all the way down every time got old fast
+  const btn = document.createElement("button");
+  btn.className = "add-stop";
+  btn.textContent = "+ Add a stop";
+  document.querySelector("#panel-itin .itin-note").insertAdjacentElement("afterend", btn);
+
+  const picksFrom  = $("sPicksFrom");
+  const chosenFrom = $("sChosenFrom");
+  const picksTo    = $("sPicks");
+  const chosenTo   = $("sChosen");
+  let searchTimerFrom = null, searchTimerTo = null;
+
+  btn.addEventListener("click", () => {
+    const last = DAYS[DAYS.length-1];
+    const next = new Date(last.date.getTime() + 86400000);
+    $("sDate").value = isoLocal(next);
+    $("sTo").value = ""; $("sKm").value = ""; $("sTime").value = ""; $("sStay").value = "";
+    foundTo = null; $("stopSave").disabled = true;
+    picksTo.hidden = true; chosenTo.hidden = true;
+    picksFrom.hidden = true; chosenFrom.hidden = true;
+
+    // starts out wherever the trip currently ends — a handy default, but a
+    // normal search field now, not fixed. Change it if that's not actually
+    // right rather than it being locked and silently wrong, which is what
+    // caught the road out last time
+    $("sFrom").value = last.to;
+    const lastPt = PLACES[last.to];
+    foundFrom = lastPt ? { name:last.to, lat:lastPt[0], lon:lastPt[1], region:"" } : null;
+
+    note.className = "sheet-note";
+    note.textContent = "Start typing each town and pick it from the list.";
+    stopSheet.hidden = false;
+  });
+  $("stopClose").addEventListener("click", () => { stopSheet.hidden = true; });
+  stopSheet.addEventListener("click", e => { if (e.target === stopSheet) stopSheet.hidden = true; });
+
+  // once both ends are known, work out the road between them
+  async function tryComputeRoad(){
+    if (!foundFrom || !foundTo) return;
+    note.className = "sheet-note busy";
+    note.textContent = "Working out the drive…";
+    const road = await roadBetween(toLonLat([foundFrom.lat, foundFrom.lon]), [foundTo.lon, foundTo.lat]);
+    foundTo.road = road;
+    $("sKm").value   = road.km;
+    $("sTime").value = asDrive(road.mins);
+    const guess = road.source === "estimate";
+    const kmEl = document.getElementById("chosenKm");
+    if (kmEl) kmEl.textContent =
+      ` · ${num(road.km)} km ${guess ? "as the crow flies, roughly" : "by road"} from ${foundFrom.name}`;
+    note.className = "sheet-note";
+    note.textContent = guess
+      ? "Couldn't reach the road service, so that distance is a rough estimate — change it if you know better."
+      : "Looks right? Add it to the trip.";
+  }
+
+  /* ---------- Leaving from ---------- */
+  function clearFrom(){ foundFrom = null; chosenFrom.hidden = true; }
+
+  $("sFrom").addEventListener("input", () => {
+    const q = $("sFrom").value.trim();
+    clearFrom();
+    clearTimeout(searchTimerFrom);
+    picksFrom.hidden = true;
+    if (q.length < 3) return;
+    searchTimerFrom = setTimeout(() => runSearchFrom(q), 450);
+  });
+
+  async function runSearchFrom(q){
+    note.className = "sheet-note busy";
+    note.textContent = "Searching…";
+    try {
+      const list = await searchTowns(q);
+      if (!list.length){
+        picksFrom.hidden = true;
+        note.className = "sheet-note";
+        note.textContent = "No towns found with that name. You can still type the details in yourself.";
+        return;
+      }
+      picksFrom.innerHTML = "";
+      list.forEach(t => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.innerHTML = `<b>${t.name}</b><em>${t.region}</em>`;
+        b.addEventListener("click", () => chooseFrom(t));
+        picksFrom.append(b);
+      });
+      picksFrom.hidden = false;
+      note.className = "sheet-note";
+      note.textContent = list.length > 1 ? "Pick the right one." : "Tap to confirm.";
+    } catch(err){
+      picksFrom.hidden = true;
+      note.className = "sheet-note";
+      note.textContent = "Couldn't reach the map service — no signal? Type the details in yourself and it will still be added.";
+    }
+  }
+
+  function chooseFrom(t){
+    foundFrom = t;
+    picksFrom.hidden = true;
+    $("sFrom").value = t.name;
+    chosenFrom.innerHTML = `<b>${t.name}</b>${t.region}`;
+    chosenFrom.hidden = false;
+    tryComputeRoad();
+  }
+
+  /* ---------- Driving to ---------- */
+  function clearTo(){
+    foundTo = null;
+    chosenTo.hidden = true;
+    $("stopSave").disabled = !$("sTo").value.trim();
+  }
+
+  $("sTo").addEventListener("input", () => {
+    const q = $("sTo").value.trim();
+    clearTo();
+    clearTimeout(searchTimerTo);
+    picksTo.hidden = true;
+    if (q.length < 3) return;
+    searchTimerTo = setTimeout(() => runSearchTo(q), 450);
+  });
+
+  async function runSearchTo(q){
+    note.className = "sheet-note busy";
+    note.textContent = "Searching…";
+    try {
+      const list = await searchTowns(q);
+      if (!list.length){
+        picksTo.hidden = true;
+        note.className = "sheet-note";
+        note.textContent = "No towns found with that name. You can still type the details in yourself.";
+        return;
+      }
+      picksTo.innerHTML = "";
+      list.forEach(t => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.innerHTML = `<b>${t.name}</b><em>${t.region}</em>`;
+        b.addEventListener("click", () => chooseTo(t));
+        picksTo.append(b);
+      });
+      picksTo.hidden = false;
+      note.className = "sheet-note";
+      note.textContent = list.length > 1 ? "Pick the right one." : "Tap to confirm.";
+    } catch(err){
+      picksTo.hidden = true;
+      note.className = "sheet-note";
+      note.textContent = "Couldn't reach the map service — no signal? Type the details in yourself and it will still be added.";
+      $("stopSave").disabled = !$("sTo").value.trim();
+    }
+  }
+
+  function chooseTo(t){
+    foundTo = t;
+    picksTo.hidden = true;
+    $("sTo").value = t.name;
+    chosenTo.innerHTML = `<b>${t.name}</b>${t.region}<span id="chosenKm"></span>`;
+    chosenTo.hidden = false;
+    $("stopSave").disabled = false;
+    tryComputeRoad();
+  }
+
+  $("stopSave").addEventListener("click", () => {
+    const to = $("sTo").value.trim();
+    if (!to) return;
+    const stop = {
+      d: $("sDate").value,
+      from: $("sFrom").value.trim() || null,
+      to,
+      km: $("sKm").value ? +$("sKm").value : null,
+      time: $("sTime").value.trim() || null,
+      stay: $("sStay").value.trim() || null,
+      added: true
+    };
+    // come back to this stop in the itinerary rather than the top of the page
+    try {
+      sessionStorage.setItem("nullarbor_land",
+        JSON.stringify({ d:stop.d, to:stop.to, t:Date.now() }));
+    } catch(e){}
+
+    if (LIVE){
+      const save = document.getElementById("stopSave");
+      save.disabled = true; save.textContent = "Adding…";
+      sbInsert("roadtrip_stops", {
+        day:stop.d, from_town:stop.from, to_town:stop.to, km:stop.km,
+        drive_time:stop.time, stay:stop.stay,
+        lat: foundTo ? foundTo.lat : null, lon: foundTo ? foundTo.lon : null,
+        road: foundTo && foundTo.road ? foundTo.road.pts : null,
+        guessed: !!(foundTo && foundTo.road && foundTo.road.source === "estimate")
+      }).then(() => {
+          // Saved to Supabase already — but the reload below only shows it
+          // straight away if this device's own re-fetch of the server also
+          // succeeds. Out on the road, signal can drop right after a save
+          // goes through, leaving the next screen still built from whatever
+          // this phone had cached before, sometimes from days earlier. So
+          // write what we just saved into the same local cache the offline
+          // path uses, right now, before reloading — the true server copy
+          // still wins and replaces this the moment a sync does complete.
+          try {
+            // drop any stale local stop already sitting on this date — a
+            // day only ever has one "added on the road" leg, so the fresh
+            // save should replace it, never sit alongside it
+            const stops = loadExtra("nullarbor_stops").filter(x => x.d !== stop.d);
+            stops.push(stop);
+            localStorage.setItem("nullarbor_stops", JSON.stringify(stops));
+            if (foundTo){
+              const places = loadExtra("nullarbor_places").filter(p => p[0] !== to);
+              places.push([to, foundTo.lat, foundTo.lon]);
+              localStorage.setItem("nullarbor_places", JSON.stringify(places));
+              if (foundTo.road){
+                const legs = loadExtra("nullarbor_legs").filter(l => l.to !== to);
+                legs.push({ from:stop.from, to, pts:foundTo.road.pts, guessed:foundTo.road.source === "estimate" });
+                localStorage.setItem("nullarbor_legs", JSON.stringify(legs));
+              }
+            }
+          } catch(e){}
+          sessionStorage.removeItem("nullarbor_seen");
+          location.reload();
+        })
+        .catch(() => {
+          save.disabled = false; save.textContent = "Add to the trip";
+          note.className = "sheet-note";
+          note.textContent = "Couldn't save it — no signal? Try again shortly.";
+        });
+      return;
+    }
+
+    const stops = loadExtra("nullarbor_stops").filter(x => x.d !== stop.d);
+    stops.push(stop);
+    localStorage.setItem("nullarbor_stops", JSON.stringify(stops));
+
+    // remember where it is, and the road to it, so the map can draw it
+    if (foundTo){
+      const places = loadExtra("nullarbor_places").filter(p => p[0] !== to);
+      places.push([to, foundTo.lat, foundTo.lon]);
+      localStorage.setItem("nullarbor_places", JSON.stringify(places));
+      if (foundTo.road){
+        const legs = loadExtra("nullarbor_legs").filter(l => l.to !== to);
+        legs.push({ from:stop.from, to, pts:foundTo.road.pts, guessed:foundTo.road.source === "estimate" });
+        localStorage.setItem("nullarbor_legs", JSON.stringify(legs));
+      }
+    }
+    location.reload();
+  });
+}
+
+/* ============================================================
+   CHANGING A DESTINATION  — a road closes, a town needs swapping
+   ============================================================ */
+if (CAN_POST){
+  const townSheet = document.getElementById("townSheet");
+  const tNote = document.getElementById("townNote");
+  const $t = id => document.getElementById(id);
+  let tFound = null;                      // {lon,lat,name,region,roadIn,roadOut,nextTown}
+  let changingDay = null;
+
+  window.openTownChange = function(dateStr){
+    const day = DAYS.find(x => x.d === dateStr);
+    if (!day) return;
+    changingDay = day;
+    $t("townFrom").textContent = day.side
+      ? `${fmtShort(day.date)} — currently a day trip from ${day.from} out to ${day.to} and back. Pick a town if they're driving on properly instead.`
+      : day.from
+      ? `${fmtShort(day.date)} — currently driving from ${day.from} to ${day.to}. Pick where they're driving to instead.`
+      : `${fmtShort(day.date)} — currently staying put in ${day.to}. Pick a town if they're driving on instead.`;
+    $t("tTo").value = "";
+    tFound = null;
+    $t("townSave").disabled = true;
+    $t("tPicks").hidden = true;
+    $t("tChosen").hidden = true;
+    tNote.className = "sheet-note";
+    tNote.textContent = "Start typing the new town and pick it from the list.";
+    townSheet.hidden = false;
+  };
+  $t("townClose").addEventListener("click", () => { townSheet.hidden = true; });
+  townSheet.addEventListener("click", e => { if (e.target === townSheet) townSheet.hidden = true; });
+
+  const tPicks  = $t("tPicks");
+  const tChosen = $t("tChosen");
+  let tTimer = null;
+
+  function tClear(){
+    tFound = null;
+    tChosen.hidden = true;
+    $t("townSave").disabled = true;
+  }
+
+  $t("tTo").addEventListener("input", () => {
+    tClear();
+    clearTimeout(tTimer);
+    const q = $t("tTo").value.trim();
+    if (q.length < 3){ tPicks.hidden = true; return; }
+    tTimer = setTimeout(() => tSearch(q), 450);
+  });
+
+  async function tSearch(q){
+    tNote.className = "sheet-note busy";
+    tNote.textContent = "Searching…";
+    try {
+      const list = await searchTowns(q);
+      if (!list.length){
+        tPicks.hidden = true;
+        tNote.className = "sheet-note";
+        tNote.textContent = "No towns found with that name.";
+        return;
+      }
+      tPicks.innerHTML = "";
+      list.forEach(t => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.innerHTML = `<b>${t.name}</b><em>${t.region}</em>`;
+        b.addEventListener("click", () => tChoose(t));
+        tPicks.append(b);
+      });
+      tPicks.hidden = false;
+      tNote.className = "sheet-note";
+      tNote.textContent = list.length > 1 ? "Pick the right one." : "Tap to confirm.";
+    } catch(err){
+      tPicks.hidden = true;
+      tNote.className = "sheet-note";
+      tNote.textContent = "Couldn't reach the map service — no signal? Try again shortly.";
+    }
+  }
+
+  // she picked the new town: work out the road in, and — walking forward
+  // through whichever days were continuing on from the old destination —
+  // the road onward too, so the map doesn't just stop short
+  async function tChoose(t){
+    tFound = t;
+    tPicks.hidden = true;
+    $t("tTo").value = t.name;
+    tChosen.innerHTML = `<b>${t.name}</b>${t.region}<span id="tChosenKm"></span>`;
+    tChosen.hidden = false;
+    // stays disabled until the road's actually worked out — saving too early
+    // sends a day off with no distance at all
+    $t("townSave").disabled = true;
+
+    tNote.className = "sheet-note busy";
+    tNote.textContent = "Working out the roads…";
+
+    const fromTown = changingDay.from || changingDay.to;
+    const fromPt = PLACES[fromTown];
+    if (fromPt){
+      tFound.roadIn = await roadBetween(toLonLat(fromPt), [t.lon, t.lat]);
+      const guess = tFound.roadIn.source === "estimate";
+      $t("tChosenKm").textContent =
+        ` · ${num(tFound.roadIn.km)} km ${guess ? "as the crow flies, roughly" : "by road"} from ${fromTown}`;
+    }
+
+    // walk forward through the run of days that were continuing on from
+    // here — a day trip returns to the same bed, so it's the town it left
+    // FROM that the next day continues on from, not the day trip itself.
+    // A rest night just follows the new name; the first day that actually
+    // drives on gets its road worked out too.
+    const oldTo = changingDay.to;
+    const cascadeFrom = changingDay.side ? changingDay.from : changingDay.to;
+    const idx = DAYS.findIndex(x => x.d === changingDay.d);
+    tFound.cascade = [];
+    for (let i = idx + 1; i < DAYS.length; i++){
+      const nd = DAYS[i];
+      if (nd.from !== cascadeFrom) break;
+      if (nd.to === t.name){
+        // that day was already driving to the same town picked here — they'll
+        // have arrived a day early, so it becomes a rest day rather than
+        // driving the same road all over again
+        tFound.cascade.push({ d:nd.d, becomesRest:true });
+        break;
+      }
+      if (!nd.side && !tFound.roadOut){
+        const toPt = PLACES[nd.to];
+        if (toPt) tFound.roadOut = await roadBetween([t.lon, t.lat], toLonLat(toPt));
+        tFound.cascade.push({ d:nd.d, main:true, to:nd.to });
+      } else {
+        tFound.cascade.push({ d:nd.d, main:false });
+      }
+    }
+
+    // a side-trip booked from the old town won't make sense from here —
+    // flag it rather than quietly leaving it stranded
+    const spur = DAYS.find(x => x.side && x.from === oldTo && x.d > changingDay.d);
+    const becomingRest = tFound.cascade.find(c => c.becomesRest);
+
+    tNote.className = "sheet-note";
+    tNote.textContent = becomingRest
+      ? `Looks right? ${fmtShort(DAYS.find(x => x.d === becomingRest.d).date)} already had them arriving here, so that day will become a rest day instead of driving it twice.`
+      : spur
+      ? `Looks right? Heads up — ${fmtShort(spur.date)}'s side-trip to ${spur.to} is currently booked from ${oldTo}, so it's worth checking that still makes sense once this is saved.`
+      : "Looks right? This changes it for everyone on the trip.";
+    // only safe to save once the road's actually been worked out
+    if (tFound === t) $t("townSave").disabled = false;
+  }
+
+  $t("townSave").addEventListener("click", async () => {
+    if (!changingDay || !tFound) return;
+    const btn = $t("townSave");
+    btn.disabled = true; btn.textContent = "Changing…";
+
+    const fromTown = changingDay.from || changingDay.to;
+    const oldTo = changingDay.to;
+    const rows = [{
+      day: changingDay.d, from_town: fromTown, to_town: tFound.name,
+      lat: tFound.lat, lon: tFound.lon,
+      km:         tFound.roadIn ? tFound.roadIn.km            : null,
+      drive_time: tFound.roadIn ? asDrive(tFound.roadIn.mins)  : null,
+      legs: tFound.roadIn ? [{ from:fromTown, to:tFound.name,
+        pts:tFound.roadIn.pts, guessed:tFound.roadIn.source === "estimate" }] : [],
+      old_from: fromTown, old_to: oldTo,
+      was_side: !!changingDay.side
+    }];
+    // a day further along that was already driving to this same town
+    // becomes redundant — it's folded into a rest day instead, via the
+    // same day_edits "staying put" flag the checkbox uses
+    const restDays = [];
+    (tFound.cascade || []).forEach(c => {
+      if (c.becomesRest){
+        rows.push({ day:c.d, from_town:tFound.name, to_town:null, lat:null, lon:null,
+          km:null, drive_time:null, legs:[], old_from:null, old_to:null, was_side:false });
+        restDays.push(c.d);
+      } else if (c.main){
+        rows.push({ day:c.d, from_town:tFound.name, to_town:null, lat:null, lon:null,
+          km:         tFound.roadOut ? tFound.roadOut.km           : null,
+          drive_time: tFound.roadOut ? asDrive(tFound.roadOut.mins) : null,
+          legs: tFound.roadOut ? [{ from:tFound.name, to:c.to,
+            pts:tFound.roadOut.pts, guessed:tFound.roadOut.source === "estimate" }] : [],
+          old_from: oldTo, old_to: c.to, was_side:false
+        });
+      } else {
+        rows.push({ day:c.d, from_town:tFound.name, to_town:null, lat:null, lon:null,
+          km:null, drive_time:null, legs:[], old_from:null, old_to:null, was_side:false });
+      }
+    });
+
+    try {
+      sessionStorage.setItem("nullarbor_land",
+        JSON.stringify({ d:changingDay.d, to:tFound.name, t:Date.now() }));
+    } catch(e){}
+
+    if (LIVE){
+      try {
+        // a day that was marked "staying put" needs that flag cleared, or
+        // it would quietly cancel this change straight back out again — and
+        // since a day_edits row always has the final say, its own km/drive
+        // time have to agree with the change just made, not be left null
+        if (changingDay.restForced) await sbUpsert("roadtrip_day_edits", {
+          day:changingDay.d, stay:changingDay.stay || null, room:changingDay.room || null,
+          act:changingDay.act || null, km:rows[0].km, drive_time:rows[0].drive_time,
+          depart_min:changingDay.depart != null ? changingDay.depart : null, rest:false
+        });
+        for (const rd of restDays){
+          const rday = DAYS.find(x => x.d === rd);
+          await sbUpsert("roadtrip_day_edits", {
+            day: rd, stay:rday.stay || null, room:rday.room || null, act:rday.act || null,
+            km:null, drive_time:null,
+            depart_min:rday.depart != null ? rday.depart : null, rest:true
+          });
+        }
+        for (const row of rows) await sbUpsert("roadtrip_route_changes", row);
+      } catch(e){
+        btn.disabled = false; btn.textContent = "Change it";
+        tNote.className = "sheet-note";
+        tNote.textContent = "Couldn't save it — no signal? Try again shortly.";
+        return;
+      }
+    } else {
+      if (changingDay.restForced){
+        const kept = loadExtra("nullarbor_edits").filter(x => x.d !== changingDay.d);
+        kept.push({ d:changingDay.d, stay:changingDay.stay || null, room:changingDay.room || null,
+                    act:changingDay.act || null, km:rows[0].km, time:rows[0].drive_time,
+                    depart:changingDay.depart != null ? changingDay.depart : null, rest:false });
+        localStorage.setItem("nullarbor_edits", JSON.stringify(kept));
+      }
+      if (restDays.length){
+        let keptE = loadExtra("nullarbor_edits");
+        restDays.forEach(rd => {
+          const rday = DAYS.find(x => x.d === rd);
+          keptE = keptE.filter(x => x.d !== rd);
+          keptE.push({ d:rd, stay:rday.stay || null, room:rday.room || null, act:rday.act || null,
+                       km:null, time:null, depart:rday.depart != null ? rday.depart : null, rest:true });
+        });
+        localStorage.setItem("nullarbor_edits", JSON.stringify(keptE));
+      }
+      let kept = loadExtra("nullarbor_route");
+      rows.forEach(row => {
+        kept = kept.filter(x => x.d !== row.day);
+        kept.push({ d:row.day, from:row.from_town, to:row.to_town, lat:row.lat, lon:row.lon,
+                    km:row.km, time:row.drive_time, legs:row.legs,
+                    oldFrom:row.old_from, oldTo:row.old_to, wasSide:row.was_side });
+      });
+      localStorage.setItem("nullarbor_route", JSON.stringify(kept));
+    }
+
+    localStorage.removeItem("nullarbor_cache");
+    sessionStorage.removeItem("nullarbor_seen");
+    location.reload();
+  });
+}
+
+/* ---- changing a day: the booking fell through, the drive took longer ---- */
+const daySheet = document.getElementById("daySheet");
+let editingDay = null;
+
+// hide (or show) the driving-specific fields to match the "staying put" toggle
+function toggleRestFields(){
+  const resting = document.getElementById("dRest").checked;
+  document.getElementById("dDriveFlds").hidden = resting;
+  document.getElementById("dDepartFld").hidden = resting;
+}
+document.getElementById("dRest").addEventListener("change", () => {
+  // switching driving back on: the fields were hidden (and showing the
+  // "staying put" placeholder values), so put the original kms and time back
+  // rather than leaving today's 0/blank in place
+  if (!document.getElementById("dRest").checked && editingDay){
+    document.getElementById("dKm").value   = editingDay.baseKm  ? editingDay.baseKm : "";
+    document.getElementById("dTime").value = editingDay.baseTime || "";
+  }
+  toggleRestFields();
+});
+
+window.editDay = function(dateStr){
+  const day = DAYS.find(x => x.d === dateStr);
+  if (!day) return;
+  editingDay = day;
+  document.getElementById("dayTitle").textContent = `${fmtShort(day.date)} — ${day.to}`;
+  document.getElementById("dStay").value = day.stay || "";
+  document.getElementById("dRoom").value = day.room || "";
+  document.getElementById("dAct").value  = day.act  || "";
+  document.getElementById("dKm").value   = day.km == null ? "" : day.km;
+  document.getElementById("dTime").value = day.time || "";
+  const dep = departOf(day);
+  document.getElementById("dDepart").value =
+    `${String(Math.floor(dep/60)).padStart(2,"0")}:${String(dep%60).padStart(2,"0")}`;
+
+  // only a day that naturally involves driving can be turned into a rest day
+  document.getElementById("dRestRow").hidden = !day.hadFrom;
+  document.getElementById("dRest").checked = !!day.restForced;
+  toggleRestFields();
+
+  daySheet.hidden = false;
+};
+
+const closeDay = () => { daySheet.hidden = true; editingDay = null; };
+document.getElementById("dayX").addEventListener("click", closeDay);
+document.getElementById("dayCancel").addEventListener("click", closeDay);
+daySheet.addEventListener("click", e => { if (e.target === daySheet) closeDay(); });
+
+document.getElementById("daySave").addEventListener("click", async () => {
+  if (!editingDay) return;
+  const btn = document.getElementById("daySave");
+  const note = document.getElementById("dayNote");
+  const resting = editingDay.hadFrom && document.getElementById("dRest").checked;
+  const kmRaw = document.getElementById("dKm").value.trim();
+
+  const row = {
+    day:        editingDay.d,
+    stay:       document.getElementById("dStay").value.trim() || null,
+    room:       document.getElementById("dRoom").value.trim() || null,
+    act:        document.getElementById("dAct").value.trim()  || null,
+    km:         resting ? null : (kmRaw === "" ? null : Math.max(0, Math.round(+kmRaw)) || 0),
+    drive_time: resting ? null : (document.getElementById("dTime").value.trim() || null),
+    depart_min: resting ? null : parseClock(document.getElementById("dDepart").value),
+    rest:       resting
+  };
+
+  // come back to this row in the itinerary once the page reloads
+  try {
+    sessionStorage.setItem("nullarbor_land",
+      JSON.stringify({ d:editingDay.d, to:editingDay.to, t:Date.now() }));
+  } catch(e){}
+
+  if (LIVE){
+    btn.disabled = true; btn.textContent = "Saving…";
+    try {
+      await sbUpsert("roadtrip_day_edits", row);
+    } catch(e){
+      btn.disabled = false; btn.textContent = "Save the change";
+      note.className = "sheet-note";
+      note.textContent = "Couldn't save it — no signal? Try again shortly.";
+      return;
+    }
+  } else {
+    const kept = loadExtra("nullarbor_edits").filter(x => x.d !== row.day);
+    kept.push({ d:row.day, stay:row.stay, room:row.room, act:row.act,
+                km:row.km, time:row.drive_time, depart:row.depart_min, rest:row.rest });
+    localStorage.setItem("nullarbor_edits", JSON.stringify(kept));
+  }
+
+  localStorage.removeItem("nullarbor_cache");
+  sessionStorage.removeItem("nullarbor_seen");
+  location.reload();
+});
+
+/* remove a stop she added by mistake — off the trip for everyone, not just
+   off this phone */
+window.askRemoveStop = function(dateStr, town){
+  ask("Remove this stop?",
+      `${town} on ${fmtShort(dt(dateStr))} comes off the trip for everyone, `
+      + `along with the drive to it. You can always add it again.`,
+      "Yes, remove it", () => removeStop(dateStr, town));
+};
+
+async function removeStop(dateStr, town){
+  // stay on the itinerary, at the day the stop came off
+  try {
+    sessionStorage.setItem("nullarbor_land",
+      JSON.stringify({ d:dateStr, to:town, gone:true, t:Date.now() }));
+  } catch(e){}
+
+  if (LIVE){
+    try {
+      await sbDelete("roadtrip_stops",
+        `day=eq.${encodeURIComponent(dateStr)}&to_town=eq.${encodeURIComponent(town)}`);
+    } catch(e){
+      // "refused" means the server has no such stop — it was only ever on this
+      // phone, so carry on and clear it locally. Anything else is no signal.
+      if (String(e.message) !== "refused"){
+        ask("Couldn't remove it",
+            "No signal? The stop is still on the trip — try again in a bit.", "OK", null);
+        return;
+      }
+    }
+    // A day's route change and its hand-typed corrections only ever described
+    // the stop being removed. Left behind they become orphans — and because
+    // both are laid over the itinerary last, they quietly overwrite whatever
+    // is added on that date next, which reads as a stop "saving as the wrong
+    // town". So they come off with the stop, not after it. Neither is allowed
+    // to fail the removal: the stop itself is already gone by here, and there
+    // may legitimately be no patch to delete.
+    for (const t of ["roadtrip_route_changes", "roadtrip_day_edits"]){
+      try { await sbDelete(t, `day=eq.${encodeURIComponent(dateStr)}`); } catch(e){}
+    }
+  }
+
+  const keep = loadExtra("nullarbor_stops").filter(x => !(x.d === dateStr && x.to === town));
+  localStorage.setItem("nullarbor_stops", JSON.stringify(keep));
+  localStorage.setItem("nullarbor_legs",
+    JSON.stringify(loadExtra("nullarbor_legs").filter(l => l.to !== town)));
+  localStorage.setItem("nullarbor_places",
+    JSON.stringify(loadExtra("nullarbor_places").filter(p => p[0] !== town)));
+  localStorage.setItem("nullarbor_route",
+    JSON.stringify(loadExtra("nullarbor_route").filter(r => r.d !== dateStr)));
+  localStorage.setItem("nullarbor_edits",
+    JSON.stringify(loadExtra("nullarbor_edits").filter(e => e.d !== dateStr)));
+  localStorage.removeItem("nullarbor_cache");
+  sessionStorage.removeItem("nullarbor_seen");
+  location.reload();
+}
+
+/* Adding or removing a stop reloads the page so everyone's copy agrees.
+   Without this she would be dropped back at the top of the map; instead she
+   comes back to the itinerary, at the row she just changed.
+   The page can reload twice (once from her change, once when the server data
+   arrives), so the marker is only cleared when the data has settled. */
+function landOnStop(settled){
+  let mark = null;
+  try { mark = JSON.parse(sessionStorage.getItem("nullarbor_land") || "null"); } catch(e){}
+  if (!mark) return;
+  if (mark.t && Date.now() - mark.t > 10 * 60000){    // stale, let it go
+    sessionStorage.removeItem("nullarbor_land");
+    return;
+  }
+
+  const tab = document.getElementById("tab-itin");
+  if (tab && tab.getAttribute("aria-selected") !== "true") tab.click();
+
+  const rows = [...document.querySelectorAll("#itinBody tr")];
+  const match = rows.find(tr => tr.dataset.day === mark.d && tr.dataset.place === mark.to);
+
+  let row;
+  if (mark.gone){
+    if (match) return;                       // still listed — the server hasn't caught up
+    // settle on the day it came off, or the next day along. Pick by date
+    // rather than by position — the table reads newest-first, so "the next
+    // row down" is not the next day along.
+    const byDay = [...rows].sort((a,b) => a.dataset.day.localeCompare(b.dataset.day));
+    row = byDay.find(tr => tr.dataset.day >= mark.d) || byDay[byDay.length - 1];
+  } else {
+    if (!match) return;                      // not through yet, try again next load
+    row = match;
+  }
+  if (!row) return;
+
+  if (settled) sessionStorage.removeItem("nullarbor_land");
+  if (!mark.gone){
+    row.classList.add("just-added");
+    setTimeout(() => row.classList.remove("just-added"), 4500);
+  }
+  requestAnimationFrame(() => row.scrollIntoView({ block:"center", behavior:"smooth" }));
+}
+
+/* ============================================================
+   THE BELL — what has happened since she last looked.
+   Nothing is pushed to anyone's phone: this counts up quietly and is
+   waiting the next time the page is opened.
+   ============================================================ */
+const LAST_SEEN = "nullarbor_seen_at";
+
+function whatsNew(){
+  const since = localStorage.getItem(LAST_SEEN);
+  if (!since){
+    // first visit on this phone — start the clock, don't shout about the past
+    try { localStorage.setItem(LAST_SEEN, new Date().toISOString()); } catch(e){}
+    return [];
+  }
+  const t  = new Date(since).getTime();
+  const me = WHO || myName();
+  const items = [];
+
+  POSTS.forEach(p => {
+    if (!p.at || new Date(p.at).getTime() <= t || p.who === me) return;
+    const n = p.photos.length;
+    items.push({ at:p.at, post:p.id, kind:"post", who:p.who, text:p.text || "",
+                 what:`added ${n ? n + (n>1 ? " photos" : " photo") : "a note"} from ${p.place}` });
+  });
+
+  // the travellers also hear about comments and likes; everyone else just sees the photos
+  if (CAN_POST) COMMENTS.forEach(c => {
+    if (!c.at || new Date(c.at).getTime() <= t || c.who === me) return;
+    const p = POSTS.find(x => String(x.id) === String(c.post));
+    items.push({ at:c.at, post:c.post, kind:"cmt", who:c.who, text:c.text,
+                 what:`commented on ${p ? p.place : "the journal"}` });
+  });
+
+  if (CAN_POST) LIKES.forEach(l => {
+    if (!l.at || new Date(l.at).getTime() <= t || l.who === LIKER) return;
+    const p = POSTS.find(x => String(x.id) === String(l.post));
+    const whose = p && p.who === me ? "your" : p ? `${p.who}'s` : "a";
+    items.push({ at:l.at, post:l.post, kind:"like", who:l.name || "Someone", text:"",
+                 what:`liked ${whose} photo from ${p ? p.place : "the journal"}` });
+  });
+
+  return items.sort((a,b) => String(b.at).localeCompare(String(a.at)));
+}
+
+function drawBell(){
+  const items = whatsNew();
+  const label = items.length > 9 ? "9+" : String(items.length);
+
+  const bell = document.getElementById("bell");
+  document.getElementById("bellN").textContent = label;
+  bell.hidden = !items.length;
+
+  // the same count, on the Journal tab, for anyone who never taps the bell
+  const dot = document.getElementById("tabDot");
+  dot.textContent = label;
+  dot.className = items.length ? "tab-dot on" : "tab-dot";
+
+  return items;
+}
+
+window.jumpToNew = function(id){
+  document.getElementById("newSheet").hidden = true;
+  drawBell();
+  goToPost(id);
+};
+
+document.getElementById("bell").addEventListener("click", () => {
+  const items = whatsNew();
+  document.getElementById("newTitle").textContent =
+    items.length === 1 ? "One new thing" : `${items.length} new things`;
+  document.getElementById("newList").innerHTML = items.map(i => `
+    <button class="new-item" onclick="jumpToNew('${i.post}')">
+      <span class="new-ico">${i.kind === "cmt" ? "💬" : i.kind === "like" ? "❤️" : "📷"}</span>
+      <span><b>${safe(i.who)}</b> ${safe(i.what)}
+        ${i.text ? `<em>${safe(i.text)}</em>` : ""}
+        <span class="new-when">${when(i.at)}</span></span>
+    </button>`).join("") || `<p class="ask-text">Nothing new just now.</p>`;
+  document.getElementById("newSheet").hidden = false;
+  // opening it is reading it
+  try { localStorage.setItem(LAST_SEEN, new Date().toISOString()); } catch(e){}
+});
+
+const closeNew = () => { document.getElementById("newSheet").hidden = true; drawBell(); };
+document.getElementById("newX").addEventListener("click", closeNew);
+document.getElementById("newSheet").addEventListener("click", e => {
+  if (e.target.id === "newSheet") closeNew();
+});
+
+drawBell();
+landOnStop(false);
+syncFromServer();
+
+/* ============================================================
+   TABS
+   ============================================================ */
+document.querySelectorAll('[role="tab"]').forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll('[role="tab"]').forEach(b => {
+      const on = b === btn;
+      b.setAttribute("aria-selected", on);
+      document.getElementById(b.getAttribute("aria-controls")).hidden = !on;
+    });
+    if (btn.id === "tab-map") setTimeout(() => map.invalidateSize(), 60);
+    // the photo button belongs to the map and journal, not the itinerary
+    if (CAN_POST) document.getElementById("addBtn").hidden = (btn.id === "tab-itin");
+  });
+});
+</script>
+</body>
+</html>

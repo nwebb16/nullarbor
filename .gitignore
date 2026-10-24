@@ -1,0 +1,4 @@
+*.zip
+supabase-setup.sql
+*.backup-*
+desktop.ini
